@@ -207,9 +207,8 @@ function ProductForm({ initial, categories, onSaved, onCancel }: any) {
         <Field label="Price (INR)"><input type="number" className={inputCls} value={f.price ?? 0} onChange={(e) => set("price", e.target.value)} /></Field>
         <Field label="Discount price"><input type="number" className={inputCls} value={f.discount_price ?? ""} onChange={(e) => set("discount_price", e.target.value)} /></Field>
       </div>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3">
         <Field label="Material"><input className={inputCls} value={f.material ?? ""} onChange={(e) => set("material", e.target.value)} /></Field>
-        <Field label="Origin"><input className={inputCls} value={f.origin ?? ""} onChange={(e) => set("origin", e.target.value)} /></Field>
       </div>
       <div className="grid grid-cols-3 gap-3 text-xs">
         <label className="flex items-center gap-2"><input type="checkbox" checked={!!f.is_available} onChange={(e) => set("is_available", e.target.checked)} /> In stock</label>
