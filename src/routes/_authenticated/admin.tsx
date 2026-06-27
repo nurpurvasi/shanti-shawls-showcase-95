@@ -141,7 +141,7 @@ function ProductsTab({ data, onChange }: any) {
       <div className="space-y-3">
         <div className="flex justify-between items-center">
           <h2 className="font-display text-2xl text-maroon">Products ({data.products.length})</h2>
-          <PrimaryBtn onClick={() => setEditing({ name: "", slug: "", price: 0, in_stock: true, sort_order: 0, images: [] })}>
+          <PrimaryBtn onClick={() => setEditing({ name: "", slug: "", price: 0, is_available: true, sort_order: 0, images: [] })}>
             <Plus className="size-3.5" /> New
           </PrimaryBtn>
         </div>
@@ -151,7 +151,7 @@ function ProductsTab({ data, onChange }: any) {
               <img src={p.images?.[0] ?? "/placeholder.svg"} alt="" className="size-14 rounded-lg object-cover bg-mist" />
               <div className="flex-1 min-w-0">
                 <p className="font-medium text-sm truncate">{p.name}</p>
-                <p className="text-xs text-muted-foreground">{formatINR(p.discount_price ?? p.price)} {p.is_featured && "· ★"} {p.is_new_arrival && "· NEW"} {!p.in_stock && "· OOS"}</p>
+                <p className="text-xs text-muted-foreground">{formatINR(p.discount_price ?? p.price)} {p.is_featured && "· ★"} {p.is_new_arrival && "· NEW"} {!p.is_available && "· OOS"}</p>
               </div>
             </button>
           ))}
@@ -212,7 +212,7 @@ function ProductForm({ initial, categories, onSaved, onCancel }: any) {
         <Field label="Origin"><input className={inputCls} value={f.origin ?? ""} onChange={(e) => set("origin", e.target.value)} /></Field>
       </div>
       <div className="grid grid-cols-3 gap-3 text-xs">
-        <label className="flex items-center gap-2"><input type="checkbox" checked={!!f.in_stock} onChange={(e) => set("in_stock", e.target.checked)} /> In stock</label>
+        <label className="flex items-center gap-2"><input type="checkbox" checked={!!f.is_available} onChange={(e) => set("is_available", e.target.checked)} /> In stock</label>
         <label className="flex items-center gap-2"><input type="checkbox" checked={!!f.is_featured} onChange={(e) => set("is_featured", e.target.checked)} /> Featured</label>
         <label className="flex items-center gap-2"><input type="checkbox" checked={!!f.is_new_arrival} onChange={(e) => set("is_new_arrival", e.target.checked)} /> New</label>
       </div>
