@@ -197,3 +197,69 @@ export const signMediaUrl = createServerFn({ method: "POST" })
     if (error || !signed) throw error ?? new Error("Failed to sign URL");
     return { url: signed.signedUrl };
   });
+
+// Aliases for clarity in UI code
+export const upsertGalleryItem = upsertGallery;
+export const deleteGalleryItem = deleteGallery;
+
+const sectionSchema = z.object({
+  id: z.string().uuid().optional(),
+  section_key: z.string().min(1).max(60),
+  title: z.string().max(500).optional().nullable(),
+  subtitle: z.string().max(1000).optional().nullable(),
+  content: z.string().max(5000).optional().nullable(),
+  image_url: z.string().url().optional().nullable(),
+  sort_order: z.number().int().default(0),
+  is_active: z.boolean().default(true),
+});
+
+export const upsertSection = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => sectionSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const { error, data: row } = await context.supabase
+      .from("homepage_sections")
+      .upsert(data, { onConflict: "id" })
+      .select()
+      .single();
+    if (error) throw error;
+    return row;
+  });
+
+export const deleteSection = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => z.object({ id: z.string().uuid() }).parse(input))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const { error } = await context.supabase.from("homepage_sections").delete().eq("id", data.id);
+    if (error) throw error;
+    return { ok: true };
+  });
+
+// Uploads a base64-encoded image to the shanti-media bucket and returns a long-lived signed URL.
+export const uploadMedia = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) =>
+    z.object({
+      folder: z.string().min(1).max(60).regex(/^[a-z0-9-]+$/),
+      fileName: z.string().min(1).max(200),
+      contentType: z.string().min(1).max(120),
+      base64: z.string().min(1),
+    }).parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const safe = data.fileName.replace(/[^a-zA-Z0-9._-]/g, "_");
+    const path = `${data.folder}/${Date.now()}-${safe}`;
+    const buffer = Buffer.from(data.base64, "base64");
+    const { error: upErr } = await context.supabase.storage
+      .from("shanti-media")
+      .upload(path, buffer, { contentType: data.contentType, upsert: false });
+    if (upErr) throw upErr;
+    const { data: signed, error: signErr } = await context.supabase.storage
+      .from("shanti-media")
+      .createSignedUrl(path, 60 * 60 * 24 * 365 * 100);
+    if (signErr || !signed) throw signErr ?? new Error("Failed to sign URL");
+    return signed.signedUrl;
+  });
