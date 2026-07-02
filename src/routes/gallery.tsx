@@ -49,8 +49,8 @@ function GalleryPage() {
           </div>
         </div>
       </section>
-      <SiteFooter contact={contact} />
-      <WhatsAppFab number={contact.whatsapp} />
+      <SiteFooter contact={contact} social={(data.settings.social as any) ?? {}} designer={(data.settings.designer as any) ?? {}} brand={(data.settings.brand as any) ?? {}} categories={data.categories} />
+      <WhatsAppFab number={contact.whatsapp} phone={contact.phone} />
     </div>
   );
 }
