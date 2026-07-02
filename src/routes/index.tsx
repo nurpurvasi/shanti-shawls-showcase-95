@@ -18,10 +18,10 @@ const storefrontQuery = {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Shanti Shawls Emporium — Heritage Kashmiri Shawls Since 1974" },
-      { name: "description", content: "Hand-woven Pashmina, Kani and Sozni shawls from the Kashmir valley. A trusted family atelier in Delhi, established 1974." },
-      { property: "og:title", content: "Shanti Shawls Emporium — Heritage Kashmiri Shawls" },
-      { property: "og:description", content: "Hand-woven Pashmina, Kani and Sozni shawls from the Kashmir valley." },
+      { title: "Shanti Shawls Emporium — Premium Woollen Shawls, Suits & Sarees | Nurpur, Kangra" },
+      { name: "description", content: "A trusted woollen garments and handicrafts emporium in Village Bodh, Jassur, Nurpur (Kangra), Himachal Pradesh. Premium shawls, ladies suits, winter stoles, sarees and traditional Himachali caps." },
+      { property: "og:title", content: "Shanti Shawls Emporium — Woollen heritage of Himachal Pradesh" },
+      { property: "og:description", content: "Premium shawls, ladies suits, stoles, sarees & Himachali caps from Kangra." },
       { property: "og:url", content: "/" },
     ],
     links: [{ rel: "canonical", href: "/" }],
@@ -51,12 +51,12 @@ function HomePage() {
       <section className="px-6 md:px-10 pt-10 md:pt-16 pb-16 md:pb-24">
         <div className="mx-auto max-w-6xl grid gap-12 md:grid-cols-2 md:items-end">
           <div>
-            <p className="eyebrow">{hero.eyebrow ?? `Established ${brand.established ?? "1974"} · Srinagar`}</p>
+            <p className="eyebrow">{hero.eyebrow ?? `Kangra Valley · Himachal Pradesh · Est. ${brand.established ?? "1985"}`}</p>
             <h1 className="mt-5 font-display text-5xl md:text-7xl leading-[1.05] text-balance text-maroon">
-              {hero.title ? <>{hero.title}.</> : <>The Art of <em className="italic">Eternal</em> Weave.</>}
+              {hero.title ? <>{hero.title}.</> : <>The Warmth of the <em className="italic">Himalayas</em>, Woven by Hand.</>}
             </h1>
             <p className="mt-6 max-w-md text-muted-foreground leading-relaxed">
-              {hero.subtitle ?? "An investigation into the weight of silence and the texture of ancestral memory — hand-woven for five decades by master artisans of the Kashmir Valley."}
+              {hero.subtitle ?? "Premium shawls, stoles, ladies suits, sarees and traditional Himachali caps — crafted in the foothills of the Dhauladhar and trusted by families across India for over three decades."}
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-3 max-w-md">
               <Link
@@ -267,8 +267,8 @@ function HomePage() {
         </div>
       </section>
 
-      <SiteFooter contact={contact} />
-      <WhatsAppFab number={contact.whatsapp} />
+      <SiteFooter contact={contact} social={(data.settings.social as any) ?? {}} designer={(data.settings.designer as any) ?? {}} brand={(data.settings.brand as any) ?? {}} categories={data.categories} />
+      <WhatsAppFab number={contact.whatsapp} phone={contact.phone} />
     </div>
   );
 }

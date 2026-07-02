@@ -25,6 +25,12 @@ export const detailImg2 = detail2;
 export const atelierImg = atelier;
 
 export const categoryImages: Record<string, string> = {
+  "premium-shawls": catPashmina,
+  "ladies-suits": pBlush,
+  "winter-stoles": catKani,
+  sarees: pCrimson,
+  "himachali-caps": pOchre,
+  // legacy slugs (kept for older data)
   pashmina: catPashmina,
   kani: catKani,
   sozni: catSozni,
@@ -33,6 +39,15 @@ export const categoryImages: Record<string, string> = {
 };
 
 export const productImages: Record<string, string> = {
+  "kangra-heritage-shawl": pCrimson,
+  "dhauladhar-pashmina": pIvory,
+  "rani-winter-suit": pBlush,
+  "mehendi-suit-set": pEmerald,
+  "kullu-stripe-stole": pOchre,
+  "crimson-silk-saree": pBridal,
+  "kullu-cap-classic": pSaffron,
+  "kinnauri-cap-emerald": pMidnight,
+  // legacy
   "crimson-heritage-pashmina": pCrimson,
   "ivory-sozni-wrap": pIvory,
   "emerald-kani-stole": pEmerald,

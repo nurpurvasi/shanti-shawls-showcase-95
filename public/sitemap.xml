@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
-  <url><loc>/about</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>/products</loc><changefreq>weekly</changefreq><priority>0.9</priority></url>
-  <url><loc>/gallery</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>/reviews</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
-  <url><loc>/faq</loc><changefreq>monthly</changefreq><priority>0.6</priority></url>
-  <url><loc>/contact</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>/products?category=premium-shawls</loc><priority>0.8</priority></url>
+  <url><loc>/products?category=ladies-suits</loc><priority>0.8</priority></url>
+  <url><loc>/products?category=winter-stoles</loc><priority>0.8</priority></url>
+  <url><loc>/products?category=sarees</loc><priority>0.8</priority></url>
+  <url><loc>/products?category=himachali-caps</loc><priority>0.8</priority></url>
+  <url><loc>/gallery</loc><priority>0.7</priority></url>
+  <url><loc>/about</loc><priority>0.6</priority></url>
+  <url><loc>/reviews</loc><priority>0.6</priority></url>
+  <url><loc>/faq</loc><priority>0.6</priority></url>
+  <url><loc>/contact</loc><priority>0.7</priority></url>
 </urlset>
