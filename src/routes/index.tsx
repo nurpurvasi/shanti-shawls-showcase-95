@@ -18,10 +18,10 @@ const storefrontQuery = {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Shanti Shawls Emporium — Heritage Kashmiri Shawls Since 1974" },
-      { name: "description", content: "Hand-woven Pashmina, Kani and Sozni shawls from the Kashmir valley. A trusted family atelier in Delhi, established 1974." },
-      { property: "og:title", content: "Shanti Shawls Emporium — Heritage Kashmiri Shawls" },
-      { property: "og:description", content: "Hand-woven Pashmina, Kani and Sozni shawls from the Kashmir valley." },
+      { title: "Shanti Shawls Emporium — Premium Woollen Shawls, Suits & Sarees | Nurpur, Kangra" },
+      { name: "description", content: "A trusted woollen garments and handicrafts emporium in Village Bodh, Jassur, Nurpur (Kangra), Himachal Pradesh. Premium shawls, ladies suits, winter stoles, sarees and traditional Himachali caps." },
+      { property: "og:title", content: "Shanti Shawls Emporium — Woollen heritage of Himachal Pradesh" },
+      { property: "og:description", content: "Premium shawls, ladies suits, stoles, sarees & Himachali caps from Kangra." },
       { property: "og:url", content: "/" },
     ],
     links: [{ rel: "canonical", href: "/" }],
