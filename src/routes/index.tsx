@@ -51,12 +51,12 @@ function HomePage() {
       <section className="px-6 md:px-10 pt-10 md:pt-16 pb-16 md:pb-24">
         <div className="mx-auto max-w-6xl grid gap-12 md:grid-cols-2 md:items-end">
           <div>
-            <p className="eyebrow">{hero.eyebrow ?? `Established ${brand.established ?? "1974"} · Srinagar`}</p>
+            <p className="eyebrow">{hero.eyebrow ?? `Kangra Valley · Himachal Pradesh · Est. ${brand.established ?? "1985"}`}</p>
             <h1 className="mt-5 font-display text-5xl md:text-7xl leading-[1.05] text-balance text-maroon">
-              {hero.title ? <>{hero.title}.</> : <>The Art of <em className="italic">Eternal</em> Weave.</>}
+              {hero.title ? <>{hero.title}.</> : <>The Warmth of the <em className="italic">Himalayas</em>, Woven by Hand.</>}
             </h1>
             <p className="mt-6 max-w-md text-muted-foreground leading-relaxed">
-              {hero.subtitle ?? "An investigation into the weight of silence and the texture of ancestral memory — hand-woven for five decades by master artisans of the Kashmir Valley."}
+              {hero.subtitle ?? "Premium shawls, stoles, ladies suits, sarees and traditional Himachali caps — crafted in the foothills of the Dhauladhar and trusted by families across India for over three decades."}
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-3 max-w-md">
               <Link
