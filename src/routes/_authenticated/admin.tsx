@@ -295,6 +295,7 @@ function CategoryForm({ initial, onSaved, onCancel }: any) {
         </div>
       </Field>
       <Field label="Sort order"><input type="number" className={inputCls} value={f.sort_order ?? 0} onChange={(e) => set("sort_order", e.target.value)} /></Field>
+      <label className="flex items-center gap-2 text-xs"><input type="checkbox" checked={f.is_active !== false} onChange={(e) => set("is_active", e.target.checked)} /> Visible on site</label>
       <div className="flex gap-2"><PrimaryBtn onClick={save} disabled={busy}><Save className="size-3.5" /> Save</PrimaryBtn>{f.id && <button onClick={remove} className="rounded-full border border-maroon/20 px-4 py-2.5 text-xs"><Trash2 className="size-3.5" /></button>}</div>
     </div>
   );
