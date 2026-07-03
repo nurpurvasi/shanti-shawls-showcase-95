@@ -12,7 +12,7 @@ import {
   upsertSetting, upsertSection, deleteSection,
   uploadMedia,
 } from "@/lib/admin.functions";
-import { fetchStorefront } from "@/lib/storefront.functions";
+import { fetchAdminData } from "@/lib/admin.functions";
 import { formatINR } from "@/lib/format";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
@@ -30,8 +30,8 @@ function AdminPage() {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const { data, refetch, isLoading } = useQuery({
-    queryKey: ["storefront"],
-    queryFn: () => fetchStorefront(),
+    queryKey: ["admin-data"],
+    queryFn: () => fetchAdminData(),
   });
 
   async function signOut() {
@@ -41,6 +41,7 @@ function AdminPage() {
 
   async function refresh() {
     await refetch();
+    qc.invalidateQueries({ queryKey: ["admin-data"] });
     qc.invalidateQueries({ queryKey: ["storefront"] });
   }
 
@@ -294,6 +295,7 @@ function CategoryForm({ initial, onSaved, onCancel }: any) {
         </div>
       </Field>
       <Field label="Sort order"><input type="number" className={inputCls} value={f.sort_order ?? 0} onChange={(e) => set("sort_order", e.target.value)} /></Field>
+      <label className="flex items-center gap-2 text-xs"><input type="checkbox" checked={f.is_active !== false} onChange={(e) => set("is_active", e.target.checked)} /> Visible on site</label>
       <div className="flex gap-2"><PrimaryBtn onClick={save} disabled={busy}><Save className="size-3.5" /> Save</PrimaryBtn>{f.id && <button onClick={remove} className="rounded-full border border-maroon/20 px-4 py-2.5 text-xs"><Trash2 className="size-3.5" /></button>}</div>
     </div>
   );
@@ -323,10 +325,11 @@ function GalleryTab({ data, onChange }: any) {
       </div>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {data.gallery.map((g: any) => (
-          <div key={g.id} className="rounded-2xl overflow-hidden bg-ivory border border-maroon/10">
+          <div key={g.id} className={`rounded-2xl overflow-hidden bg-ivory border ${g.is_active === false ? "border-maroon/30 opacity-60" : "border-maroon/10"}`}>
             <img src={g.image_url} alt="" className="w-full aspect-square object-cover" />
             <div className="p-3 space-y-2">
               <input defaultValue={g.caption ?? ""} placeholder="Caption" onBlur={(e) => e.target.value !== (g.caption ?? "") && updateCaption(g, e.target.value)} className={inputCls + " text-xs"} />
+              <label className="flex items-center gap-2 text-xs"><input type="checkbox" checked={g.is_active !== false} onChange={(e) => upsertGalleryItem({ data: { ...g, is_active: e.target.checked } }).then(onChange)} /> Visible</label>
               <button onClick={() => remove(g.id)} className="text-xs text-maroon hover:underline">Remove</button>
             </div>
           </div>
@@ -449,6 +452,7 @@ function SettingsTab({ data, onChange }: any) {
   const [contact, setContact] = useState<any>(data.settings.contact ?? {});
   const [hero, setHero] = useState<any>(data.settings.hero ?? {});
   const [brand, setBrand] = useState<any>(data.settings.brand ?? {});
+  const [social, setSocial] = useState<any>(data.settings.social ?? {});
   const [busy, setBusy] = useState(false);
 
   async function saveAll() {
@@ -458,8 +462,9 @@ function SettingsTab({ data, onChange }: any) {
         upsertSetting({ data: { key: "contact", value: contact } }),
         upsertSetting({ data: { key: "hero", value: hero } }),
         upsertSetting({ data: { key: "brand", value: brand } }),
+        upsertSetting({ data: { key: "social", value: social } }),
       ]);
-      toast.success("Saved");
+      toast.success("Settings saved");
       onChange();
     } catch (e: any) { toast.error(e?.message ?? "Failed"); } finally { setBusy(false); }
   }
@@ -495,6 +500,14 @@ function SettingsTab({ data, onChange }: any) {
         <h3 className="font-display text-xl text-maroon pt-4 border-t border-maroon/10">Brand</h3>
         <Field label="Tagline"><input className={inputCls} value={brand.tagline ?? ""} onChange={(e) => setBrand({ ...brand, tagline: e.target.value })} /></Field>
         <Field label="Established Year"><input className={inputCls} value={brand.established ?? ""} onChange={(e) => setBrand({ ...brand, established: e.target.value })} /></Field>
+      </section>
+
+      <section className="rounded-2xl border border-maroon/10 bg-ivory p-6 space-y-4 md:col-span-2">
+        <h3 className="font-display text-xl text-maroon">Social Links</h3>
+        <div className="grid md:grid-cols-2 gap-4">
+          <Field label="Facebook URL"><input className={inputCls} value={social.facebook ?? ""} onChange={(e) => setSocial({ ...social, facebook: e.target.value })} placeholder="https://www.facebook.com/..." /></Field>
+          <Field label="Instagram URL"><input className={inputCls} value={social.instagram ?? ""} onChange={(e) => setSocial({ ...social, instagram: e.target.value })} placeholder="https://www.instagram.com/..." /></Field>
+        </div>
       </section>
 
       <div className="md:col-span-2"><PrimaryBtn onClick={saveAll} disabled={busy}><Save className="size-3.5" /> Save all settings</PrimaryBtn></div>

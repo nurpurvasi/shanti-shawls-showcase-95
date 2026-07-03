@@ -24,6 +24,32 @@ export const checkIsAdmin = createServerFn({ method: "GET" })
     return { isAdmin: !!data };
   });
 
+// Admin-only unfiltered snapshot of all content (includes hidden/inactive rows)
+export const fetchAdminData = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const sb = context.supabase;
+    const [categories, products, reviews, gallery, sections, settings] = await Promise.all([
+      sb.from("categories").select("*").order("sort_order"),
+      sb.from("products").select("*").order("sort_order"),
+      sb.from("reviews").select("*").order("sort_order"),
+      sb.from("gallery").select("*").order("sort_order"),
+      sb.from("homepage_sections").select("*").order("sort_order"),
+      sb.from("settings").select("*"),
+    ]);
+    const settingsMap: Record<string, any> = {};
+    (settings.data ?? []).forEach((row: any) => { settingsMap[row.key] = row.value; });
+    return {
+      categories: categories.data ?? [],
+      products: products.data ?? [],
+      reviews: reviews.data ?? [],
+      gallery: gallery.data ?? [],
+      sections: sections.data ?? [],
+      settings: settingsMap,
+    };
+  });
+
 const productSchema = z.object({
   id: z.string().uuid().optional(),
   name: z.string().min(1).max(200),
