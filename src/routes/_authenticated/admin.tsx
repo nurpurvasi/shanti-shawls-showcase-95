@@ -12,7 +12,7 @@ import {
   upsertSetting, upsertSection, deleteSection,
   uploadMedia,
 } from "@/lib/admin.functions";
-import { fetchStorefront } from "@/lib/storefront.functions";
+import { fetchAdminData } from "@/lib/admin.functions";
 import { formatINR } from "@/lib/format";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
