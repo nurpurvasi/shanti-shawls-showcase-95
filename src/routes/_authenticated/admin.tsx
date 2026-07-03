@@ -30,8 +30,8 @@ function AdminPage() {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const { data, refetch, isLoading } = useQuery({
-    queryKey: ["storefront"],
-    queryFn: () => fetchStorefront(),
+    queryKey: ["admin-data"],
+    queryFn: () => fetchAdminData(),
   });
 
   async function signOut() {
