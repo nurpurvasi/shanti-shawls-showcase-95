@@ -43,14 +43,22 @@ export function SiteHeader() {
         </button>
       </div>
       {open && (
-        <div className="fixed inset-0 z-50 bg-cream md:hidden">
-          <div className="flex items-center justify-between px-6 py-4 border-b border-maroon/10">
-            <span className="font-display text-xl text-maroon uppercase">Shanti</span>
+        <div
+          className="fixed inset-0 z-[9999] md:hidden bg-cream shadow-2xl animate-slide-in-right flex flex-col"
+          style={{ opacity: 1, backgroundColor: "var(--color-cream)" }}
+          role="dialog"
+          aria-modal="true"
+        >
+          <div className="flex items-center justify-between px-6 py-4 border-b border-maroon/10 bg-cream">
+            <Link to="/" onClick={() => setOpen(false)} className="flex flex-col leading-none">
+              <span className="font-display text-xl font-medium uppercase tracking-tight text-maroon">Shanti</span>
+              <span className="mt-0.5 eyebrow !text-[8px] !tracking-[0.5em] text-muted-foreground">Shawls Emporium</span>
+            </Link>
             <button onClick={() => setOpen(false)} aria-label="Close menu" className="p-2 -mr-2 text-maroon">
               <X className="size-5" />
             </button>
           </div>
-          <nav className="flex flex-col px-6 py-10 gap-6">
+          <nav className="flex flex-1 flex-col px-6 py-10 gap-6 overflow-y-auto bg-cream">
             {links.map((l) => (
               <Link
                 key={l.to}
