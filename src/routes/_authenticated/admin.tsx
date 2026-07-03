@@ -41,6 +41,7 @@ function AdminPage() {
 
   async function refresh() {
     await refetch();
+    qc.invalidateQueries({ queryKey: ["admin-data"] });
     qc.invalidateQueries({ queryKey: ["storefront"] });
   }
 
