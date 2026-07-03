@@ -450,6 +450,7 @@ function SettingsTab({ data, onChange }: any) {
   const [contact, setContact] = useState<any>(data.settings.contact ?? {});
   const [hero, setHero] = useState<any>(data.settings.hero ?? {});
   const [brand, setBrand] = useState<any>(data.settings.brand ?? {});
+  const [social, setSocial] = useState<any>(data.settings.social ?? {});
   const [busy, setBusy] = useState(false);
 
   async function saveAll() {
@@ -459,8 +460,9 @@ function SettingsTab({ data, onChange }: any) {
         upsertSetting({ data: { key: "contact", value: contact } }),
         upsertSetting({ data: { key: "hero", value: hero } }),
         upsertSetting({ data: { key: "brand", value: brand } }),
+        upsertSetting({ data: { key: "social", value: social } }),
       ]);
-      toast.success("Saved");
+      toast.success("Settings saved");
       onChange();
     } catch (e: any) { toast.error(e?.message ?? "Failed"); } finally { setBusy(false); }
   }
@@ -496,6 +498,14 @@ function SettingsTab({ data, onChange }: any) {
         <h3 className="font-display text-xl text-maroon pt-4 border-t border-maroon/10">Brand</h3>
         <Field label="Tagline"><input className={inputCls} value={brand.tagline ?? ""} onChange={(e) => setBrand({ ...brand, tagline: e.target.value })} /></Field>
         <Field label="Established Year"><input className={inputCls} value={brand.established ?? ""} onChange={(e) => setBrand({ ...brand, established: e.target.value })} /></Field>
+      </section>
+
+      <section className="rounded-2xl border border-maroon/10 bg-ivory p-6 space-y-4 md:col-span-2">
+        <h3 className="font-display text-xl text-maroon">Social Links</h3>
+        <div className="grid md:grid-cols-2 gap-4">
+          <Field label="Facebook URL"><input className={inputCls} value={social.facebook ?? ""} onChange={(e) => setSocial({ ...social, facebook: e.target.value })} placeholder="https://www.facebook.com/..." /></Field>
+          <Field label="Instagram URL"><input className={inputCls} value={social.instagram ?? ""} onChange={(e) => setSocial({ ...social, instagram: e.target.value })} placeholder="https://www.instagram.com/..." /></Field>
+        </div>
       </section>
 
       <div className="md:col-span-2"><PrimaryBtn onClick={saveAll} disabled={busy}><Save className="size-3.5" /> Save all settings</PrimaryBtn></div>
