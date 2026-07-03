@@ -325,10 +325,11 @@ function GalleryTab({ data, onChange }: any) {
       </div>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {data.gallery.map((g: any) => (
-          <div key={g.id} className="rounded-2xl overflow-hidden bg-ivory border border-maroon/10">
+          <div key={g.id} className={`rounded-2xl overflow-hidden bg-ivory border ${g.is_active === false ? "border-maroon/30 opacity-60" : "border-maroon/10"}`}>
             <img src={g.image_url} alt="" className="w-full aspect-square object-cover" />
             <div className="p-3 space-y-2">
               <input defaultValue={g.caption ?? ""} placeholder="Caption" onBlur={(e) => e.target.value !== (g.caption ?? "") && updateCaption(g, e.target.value)} className={inputCls + " text-xs"} />
+              <label className="flex items-center gap-2 text-xs"><input type="checkbox" checked={g.is_active !== false} onChange={(e) => upsertGalleryItem({ data: { ...g, is_active: e.target.checked } }).then(onChange)} /> Visible</label>
               <button onClick={() => remove(g.id)} className="text-xs text-maroon hover:underline">Remove</button>
             </div>
           </div>
