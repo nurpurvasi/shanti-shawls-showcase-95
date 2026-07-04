@@ -22,7 +22,7 @@ const contactSchema = z.object({
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact — Shanti Shawls Emporium, New Delhi" },
+      { title: "Contact — Shanti Shawls Emporium, Nurpur (Kangra), Himachal Pradesh" },
       { name: "description", content: "Phone, WhatsApp, email and showroom address for Shanti Shawls Emporium. We respond within the same day." },
       { property: "og:title", content: "Contact — Shanti Shawls Emporium" },
       { property: "og:description", content: "Phone, WhatsApp, email and showroom address." },
