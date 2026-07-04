@@ -53,6 +53,7 @@ function ProductsPage() {
   return (
     <div className="min-h-screen bg-cream">
       <SiteHeader />
+      <main id="main" tabIndex={-1} className="focus:outline-none">
       <section className="px-6 md:px-10 pt-16 pb-10">
         <div className="mx-auto max-w-6xl">
           <SectionHeading eyebrow="The Collection" title="Hand-woven, one piece at a time" align="left">
@@ -104,6 +105,7 @@ function ProductsPage() {
           )}
         </div>
       </section>
+      </main>
 
       <SiteFooter contact={contact} social={(data.settings.social as any) ?? {}} designer={(data.settings.designer as any) ?? {}} brand={(data.settings.brand as any) ?? {}} categories={data.categories} />
       <WhatsAppFab number={contact.whatsapp} phone={contact.phone} />

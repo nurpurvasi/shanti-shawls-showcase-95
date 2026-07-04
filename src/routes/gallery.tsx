@@ -34,6 +34,7 @@ function GalleryPage() {
   return (
     <div className="min-h-screen bg-cream">
       <SiteHeader />
+      <main id="main" tabIndex={-1} className="focus:outline-none">
       <section className="px-6 md:px-10 py-16">
         <div className="mx-auto max-w-6xl">
           <SectionHeading eyebrow="Gallery" title="Quiet moments from the emporium" />
@@ -49,6 +50,7 @@ function GalleryPage() {
           </div>
         </div>
       </section>
+      </main>
       <SiteFooter contact={contact} social={(data.settings.social as any) ?? {}} designer={(data.settings.designer as any) ?? {}} brand={(data.settings.brand as any) ?? {}} categories={data.categories} />
       <WhatsAppFab number={contact.whatsapp} phone={contact.phone} />
     </div>

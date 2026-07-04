@@ -57,6 +57,7 @@ function AuthPage() {
   return (
     <div className="min-h-screen bg-cream">
       <SiteHeader />
+      <main id="main" tabIndex={-1} className="focus:outline-none">
       <section className="px-6 md:px-10 py-20">
         <div className="mx-auto max-w-md">
           <p className="eyebrow text-center">Admin Access</p>
@@ -87,6 +88,7 @@ function AuthPage() {
           </form>
         </div>
       </section>
+      </main>
     </div>
   );
 }

@@ -33,6 +33,7 @@ function AboutPage() {
   return (
     <div className="min-h-screen bg-cream">
       <SiteHeader />
+      <main id="main" tabIndex={-1} className="focus:outline-none">
       <article className="px-6 md:px-10 py-20">
         <div className="mx-auto max-w-3xl">
           <p className="eyebrow">Our Story · Est. {brand.established ?? "1985"}</p>
@@ -113,6 +114,7 @@ function AboutPage() {
           </div>
         </div>
       </article>
+      </main>
       <SiteFooter contact={contact} social={social} designer={designer} brand={brand} categories={data.categories} />
       <WhatsAppFab number={contact.whatsapp} phone={contact.phone} />
     </div>
