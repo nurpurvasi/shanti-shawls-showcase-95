@@ -71,32 +71,33 @@ export function SiteFooter({
           </div>
 
           {/* Quick Links */}
-          <div>
+          <nav aria-label="Footer quick links">
             <p className="eyebrow !text-gold">Quick Links</p>
             <ul className="mt-4 space-y-2 text-sm">
-              <li><Link to="/" className="text-cream/70 hover:text-gold">Home</Link></li>
-              <li><Link to="/products" className="text-cream/70 hover:text-gold">Collection</Link></li>
-              <li><Link to="/gallery" className="text-cream/70 hover:text-gold">Gallery</Link></li>
-              <li><Link to="/about" className="text-cream/70 hover:text-gold">Our Story</Link></li>
-              <li><Link to="/reviews" className="text-cream/70 hover:text-gold">Reviews</Link></li>
-              <li><Link to="/faq" className="text-cream/70 hover:text-gold">FAQ</Link></li>
-              <li><Link to="/contact" className="text-cream/70 hover:text-gold">Contact</Link></li>
+              <li><Link to="/" className="text-cream/80 hover:text-gold">Home</Link></li>
+              <li><Link to="/products" className="text-cream/80 hover:text-gold">Collection</Link></li>
+              <li><Link to="/gallery" className="text-cream/80 hover:text-gold">Gallery</Link></li>
+              <li><Link to="/about" className="text-cream/80 hover:text-gold">Our Story</Link></li>
+              <li><Link to="/reviews" className="text-cream/80 hover:text-gold">Reviews</Link></li>
+              <li><Link to="/faq" className="text-cream/80 hover:text-gold">FAQ</Link></li>
+              <li><Link to="/contact" className="text-cream/80 hover:text-gold">Contact</Link></li>
             </ul>
-          </div>
+          </nav>
 
           {/* Categories */}
-          <div>
+          <nav aria-label="Footer categories">
             <p className="eyebrow !text-gold">Categories</p>
             <ul className="mt-4 space-y-2 text-sm">
               {cats.map((c) => (
                 <li key={c.slug}>
-                  <Link to="/products" search={{ category: c.slug } as any} className="text-cream/70 hover:text-gold">
+                  <Link to="/products" search={{ category: c.slug } as any} className="text-cream/80 hover:text-gold">
                     {c.name}
                   </Link>
                 </li>
               ))}
             </ul>
-          </div>
+          </nav>
+
 
           {/* Contact */}
           <div>
@@ -122,7 +123,7 @@ export function SiteFooter({
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-16 pt-6 border-t border-cream/10 flex flex-col md:flex-row justify-between gap-4 text-[10px] uppercase tracking-[0.3em] text-cream/40">
+        <div className="mt-16 pt-6 border-t border-cream/15 flex flex-col md:flex-row justify-between gap-4 text-[10px] uppercase tracking-[0.3em] text-cream/75">
           <span>© {new Date().getFullYear()} {brandName}. All rights reserved.</span>
           <span>
             Designed &amp; Developed by{" "}
@@ -132,22 +133,23 @@ export function SiteFooter({
             {designer?.email && (
               <>
                 {" · "}
-                <a href={`mailto:${designer.email}`} className="text-cream/60 normal-case tracking-normal hover:text-gold">{designer.email}</a>
+                <a href={`mailto:${designer.email}`} className="text-cream/85 normal-case tracking-normal hover:text-gold">{designer.email}</a>
               </>
             )}
             {designer?.phone && (
               <>
                 {" · "}
-                <a href={telLink(designer.phone)} className="text-cream/60 normal-case tracking-normal hover:text-gold">{designer.phone}</a>
+                <a href={telLink(designer.phone)} className="text-cream/85 normal-case tracking-normal hover:text-gold">{designer.phone}</a>
               </>
             )}
           </span>
         </div>
         <div className="mt-4 text-center">
-          <Link to="/auth" className="text-cream/30 text-[10px] uppercase tracking-[0.3em] hover:text-gold">
+          <Link to="/auth" className="text-cream/70 text-[10px] uppercase tracking-[0.3em] hover:text-gold">
             Admin
           </Link>
         </div>
+
       </div>
     </footer>
   );

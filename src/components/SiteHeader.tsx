@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 
 const links = [
@@ -14,20 +14,39 @@ const links = [
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+    document.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
+
   return (
     <>
+    <a
+      href="#main"
+      className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[10000] focus:px-4 focus:py-2 focus:rounded-full focus:bg-maroon focus:text-cream focus:text-xs focus:uppercase focus:tracking-widest"
+    >
+      Skip to content
+    </a>
     <header className="sticky top-0 z-40 bg-cream/85 backdrop-blur-md border-b border-maroon/10">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 md:px-10">
-        <Link to="/" className="flex flex-col leading-none">
+        <Link to="/" className="flex flex-col leading-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold rounded-sm" aria-label="Shanti Shawls Emporium — home">
           <span className="font-display text-xl font-medium uppercase tracking-tight text-maroon">Shanti</span>
           <span className="mt-0.5 eyebrow !text-[8px] !tracking-[0.5em] text-muted-foreground">Shawls Emporium</span>
         </Link>
-        <nav className="hidden md:flex items-center gap-7">
+        <nav aria-label="Primary" className="hidden md:flex items-center gap-7">
           {links.map((l) => (
             <Link
               key={l.to}
               to={l.to}
-              className="text-xs uppercase tracking-[0.18em] text-ink/70 hover:text-maroon transition"
+              className="text-xs uppercase tracking-[0.18em] text-ink/80 hover:text-maroon transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold rounded-sm px-1"
               activeProps={{ className: "text-maroon" }}
               activeOptions={{ exact: l.to === "/" }}
             >
@@ -37,36 +56,42 @@ export function SiteHeader() {
         </nav>
         <button
           onClick={() => setOpen(true)}
-          className="md:hidden text-maroon p-2 -mr-2"
+          className="md:hidden text-maroon p-2 -mr-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold rounded-sm"
           aria-label="Open menu"
+          aria-expanded={open}
+          aria-controls="mobile-nav"
         >
-          <Menu className="size-5" />
+          <Menu className="size-5" aria-hidden="true" />
         </button>
       </div>
     </header>
+    <span id="main" tabIndex={-1} className="sr-only" aria-hidden="true">Main content</span>
+
     {open && (
       <div
+        id="mobile-nav"
         className="fixed inset-0 z-[9999] md:hidden flex flex-col"
         style={{ opacity: 1, backgroundColor: "var(--color-cream)" }}
         role="dialog"
         aria-modal="true"
+        aria-label="Site navigation"
       >
         <div className="flex items-center justify-between px-6 py-4 border-b border-maroon/10 shrink-0">
-          <Link to="/" onClick={() => setOpen(false)} className="flex flex-col leading-none">
+          <Link to="/" onClick={() => setOpen(false)} className="flex flex-col leading-none" aria-label="Shanti Shawls Emporium — home">
             <span className="font-display text-xl font-medium uppercase tracking-tight text-maroon">Shanti</span>
             <span className="mt-0.5 eyebrow !text-[8px] !tracking-[0.5em] text-muted-foreground">Shawls Emporium</span>
           </Link>
-          <button onClick={() => setOpen(false)} aria-label="Close menu" className="p-2 -mr-2 text-maroon">
-            <X className="size-5" />
+          <button onClick={() => setOpen(false)} aria-label="Close menu" className="p-2 -mr-2 text-maroon focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold rounded-sm">
+            <X className="size-5" aria-hidden="true" />
           </button>
         </div>
-        <nav className="flex flex-1 flex-col px-6 py-10 gap-6 overflow-y-auto">
+        <nav aria-label="Mobile primary" className="flex flex-1 flex-col px-6 py-10 gap-6 overflow-y-auto">
           {links.map((l) => (
             <Link
               key={l.to}
               to={l.to}
               onClick={() => setOpen(false)}
-              className="font-display text-3xl text-maroon"
+              className="font-display text-3xl text-maroon focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold rounded-sm"
             >
               {l.label}
             </Link>

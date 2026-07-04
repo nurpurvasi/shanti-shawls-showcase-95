@@ -83,8 +83,11 @@ function ProductsPage() {
                 value={q}
                 onChange={(e) => { setQ(e.target.value); navigate({ search: (s: any) => ({ ...s, q: e.target.value || undefined }) }); }}
                 placeholder="Search by name or material"
-                className="w-full pl-10 pr-4 py-3 rounded-full bg-ivory border border-maroon/15 text-sm placeholder:text-muted-foreground focus:outline-none focus:border-gold transition"
+                aria-label="Search products by name or material"
+                type="search"
+                className="w-full pl-10 pr-4 py-3 rounded-full bg-ivory border border-maroon/15 text-sm placeholder:text-muted-foreground focus:outline-none focus:border-gold focus-visible:ring-2 focus-visible:ring-gold transition"
               />
+
             </div>
           </div>
         </div>
