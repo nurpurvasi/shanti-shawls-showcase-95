@@ -123,7 +123,7 @@ export function SiteFooter({
         </div>
 
         {/* Bottom bar */}
-        <div className="mt-16 pt-6 border-t border-cream/10 flex flex-col md:flex-row justify-between gap-4 text-[10px] uppercase tracking-[0.3em] text-cream/40">
+        <div className="mt-16 pt-6 border-t border-cream/15 flex flex-col md:flex-row justify-between gap-4 text-[10px] uppercase tracking-[0.3em] text-cream/75">
           <span>© {new Date().getFullYear()} {brandName}. All rights reserved.</span>
           <span>
             Designed &amp; Developed by{" "}
@@ -133,22 +133,23 @@ export function SiteFooter({
             {designer?.email && (
               <>
                 {" · "}
-                <a href={`mailto:${designer.email}`} className="text-cream/60 normal-case tracking-normal hover:text-gold">{designer.email}</a>
+                <a href={`mailto:${designer.email}`} className="text-cream/85 normal-case tracking-normal hover:text-gold">{designer.email}</a>
               </>
             )}
             {designer?.phone && (
               <>
                 {" · "}
-                <a href={telLink(designer.phone)} className="text-cream/60 normal-case tracking-normal hover:text-gold">{designer.phone}</a>
+                <a href={telLink(designer.phone)} className="text-cream/85 normal-case tracking-normal hover:text-gold">{designer.phone}</a>
               </>
             )}
           </span>
         </div>
         <div className="mt-4 text-center">
-          <Link to="/auth" className="text-cream/30 text-[10px] uppercase tracking-[0.3em] hover:text-gold">
+          <Link to="/auth" className="text-cream/70 text-[10px] uppercase tracking-[0.3em] hover:text-gold">
             Admin
           </Link>
         </div>
+
       </div>
     </footer>
   );
