@@ -65,6 +65,8 @@ export function SiteHeader() {
         </button>
       </div>
     </header>
+    <span id="main" tabIndex={-1} className="sr-only" aria-hidden="true">Main content</span>
+
     {open && (
       <div
         id="mobile-nav"
