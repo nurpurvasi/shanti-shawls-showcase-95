@@ -63,6 +63,7 @@ function ContactPage() {
   return (
     <div className="min-h-screen bg-cream">
       <SiteHeader />
+      <main id="main" tabIndex={-1} className="focus:outline-none">
       <section className="px-6 md:px-10 py-20">
         <div className="mx-auto max-w-6xl grid md:grid-cols-2 gap-16">
           <div>
@@ -114,6 +115,7 @@ function ContactPage() {
           </div>
         )}
       </section>
+      </main>
       <SiteFooter contact={contact} social={(data.settings.social as any) ?? {}} designer={(data.settings.designer as any) ?? {}} brand={(data.settings.brand as any) ?? {}} categories={data.categories} />
       <WhatsAppFab number={contact.whatsapp} phone={contact.phone} />
     </div>

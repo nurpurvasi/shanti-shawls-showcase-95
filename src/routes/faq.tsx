@@ -31,6 +31,7 @@ function FaqPage() {
   return (
     <div className="min-h-screen bg-cream">
       <SiteHeader />
+      <main id="main" tabIndex={-1} className="focus:outline-none">
       <section className="px-6 md:px-10 py-20">
         <div className="mx-auto max-w-3xl">
           <SectionHeading eyebrow="Frequently Asked" title="Quietly, all the practical questions" />
@@ -48,6 +49,7 @@ function FaqPage() {
           </Accordion>
         </div>
       </section>
+      </main>
       <SiteFooter contact={contact} social={(data.settings.social as any) ?? {}} designer={(data.settings.designer as any) ?? {}} brand={(data.settings.brand as any) ?? {}} categories={data.categories} />
       <WhatsAppFab number={contact.whatsapp} phone={contact.phone} />
     </div>
