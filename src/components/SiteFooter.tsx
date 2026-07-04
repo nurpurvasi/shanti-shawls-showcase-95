@@ -71,32 +71,33 @@ export function SiteFooter({
           </div>
 
           {/* Quick Links */}
-          <div>
+          <nav aria-label="Footer quick links">
             <p className="eyebrow !text-gold">Quick Links</p>
             <ul className="mt-4 space-y-2 text-sm">
-              <li><Link to="/" className="text-cream/70 hover:text-gold">Home</Link></li>
-              <li><Link to="/products" className="text-cream/70 hover:text-gold">Collection</Link></li>
-              <li><Link to="/gallery" className="text-cream/70 hover:text-gold">Gallery</Link></li>
-              <li><Link to="/about" className="text-cream/70 hover:text-gold">Our Story</Link></li>
-              <li><Link to="/reviews" className="text-cream/70 hover:text-gold">Reviews</Link></li>
-              <li><Link to="/faq" className="text-cream/70 hover:text-gold">FAQ</Link></li>
-              <li><Link to="/contact" className="text-cream/70 hover:text-gold">Contact</Link></li>
+              <li><Link to="/" className="text-cream/80 hover:text-gold">Home</Link></li>
+              <li><Link to="/products" className="text-cream/80 hover:text-gold">Collection</Link></li>
+              <li><Link to="/gallery" className="text-cream/80 hover:text-gold">Gallery</Link></li>
+              <li><Link to="/about" className="text-cream/80 hover:text-gold">Our Story</Link></li>
+              <li><Link to="/reviews" className="text-cream/80 hover:text-gold">Reviews</Link></li>
+              <li><Link to="/faq" className="text-cream/80 hover:text-gold">FAQ</Link></li>
+              <li><Link to="/contact" className="text-cream/80 hover:text-gold">Contact</Link></li>
             </ul>
-          </div>
+          </nav>
 
           {/* Categories */}
-          <div>
+          <nav aria-label="Footer categories">
             <p className="eyebrow !text-gold">Categories</p>
             <ul className="mt-4 space-y-2 text-sm">
               {cats.map((c) => (
                 <li key={c.slug}>
-                  <Link to="/products" search={{ category: c.slug } as any} className="text-cream/70 hover:text-gold">
+                  <Link to="/products" search={{ category: c.slug } as any} className="text-cream/80 hover:text-gold">
                     {c.name}
                   </Link>
                 </li>
               ))}
             </ul>
-          </div>
+          </nav>
+
 
           {/* Contact */}
           <div>
