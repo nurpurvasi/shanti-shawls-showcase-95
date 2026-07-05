@@ -31,6 +31,7 @@ function ReviewsPage() {
     <div className="min-h-screen bg-cream">
       <SiteHeader />
       <main id="main" tabIndex={-1} className="focus:outline-none">
+      <h1 className="sr-only">Customer Reviews &amp; Testimonials</h1>
       <section className="px-6 md:px-10 py-20">
         <div className="mx-auto max-w-5xl">
           <SectionHeading eyebrow="Customer Stories" title="Trust, in their own words" />
