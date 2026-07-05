@@ -17,6 +17,8 @@ export const Route = createFileRoute("/reviews")({
       { property: "og:title", content: "Customer Reviews — Shanti Shawls" },
       { property: "og:description", content: "Real reviews from Shanti Shawls Emporium customers across India." },
       { property: "og:url", content: "/reviews" },
+      { property: "og:image", content: "/og-image.jpg" },
+      { name: "twitter:image", content: "/og-image.jpg" },
     ],
     links: [{ rel: "canonical", href: "/reviews" }],
   }),

@@ -23,6 +23,8 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "Shanti Shawls Emporium — Woollen heritage of Himachal Pradesh" },
       { property: "og:description", content: "Premium shawls, ladies suits, stoles, sarees & Himachali caps from Kangra." },
       { property: "og:url", content: "/" },
+      { property: "og:image", content: "/og-image.jpg" },
+      { name: "twitter:image", content: "/og-image.jpg" },
     ],
     links: [{ rel: "canonical", href: "/" }],
   }),
