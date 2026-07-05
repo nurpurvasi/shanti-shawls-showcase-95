@@ -17,6 +17,8 @@ export const Route = createFileRoute("/gallery")({
       { property: "og:title", content: "Gallery — Shanti Shawls Emporium" },
       { property: "og:description", content: "Inside our showroom and atelier — heritage Kashmiri textiles." },
       { property: "og:url", content: "/gallery" },
+      { property: "og:image", content: "/og-image.jpg" },
+      { name: "twitter:image", content: "/og-image.jpg" },
     ],
     links: [{ rel: "canonical", href: "/gallery" }],
   }),

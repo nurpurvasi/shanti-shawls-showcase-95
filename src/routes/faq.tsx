@@ -17,6 +17,8 @@ export const Route = createFileRoute("/faq")({
       { property: "og:title", content: "FAQ — Shanti Shawls Emporium" },
       { property: "og:description", content: "Questions about authenticity, shipping, care, returns and bespoke orders." },
       { property: "og:url", content: "/faq" },
+      { property: "og:image", content: "/og-image.jpg" },
+      { name: "twitter:image", content: "/og-image.jpg" },
     ],
     links: [{ rel: "canonical", href: "/faq" }],
   }),

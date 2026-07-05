@@ -27,6 +27,8 @@ export const Route = createFileRoute("/contact")({
       { property: "og:title", content: "Contact — Shanti Shawls Emporium" },
       { property: "og:description", content: "Phone, WhatsApp, email and showroom address." },
       { property: "og:url", content: "/contact" },
+      { property: "og:image", content: "/og-image.jpg" },
+      { name: "twitter:image", content: "/og-image.jpg" },
     ],
     links: [{ rel: "canonical", href: "/contact" }],
   }),

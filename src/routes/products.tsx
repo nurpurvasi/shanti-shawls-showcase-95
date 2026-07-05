@@ -25,6 +25,8 @@ export const Route = createFileRoute("/products")({
       { property: "og:title", content: "The Collection — Shanti Shawls Emporium" },
       { property: "og:description", content: "Hand-woven Kashmiri shawls — Pashmina, Kani, Sozni, Cashmere." },
       { property: "og:url", content: "/products" },
+      { property: "og:image", content: "/og-image.jpg" },
+      { name: "twitter:image", content: "/og-image.jpg" },
     ],
     links: [{ rel: "canonical", href: "/products" }],
   }),
