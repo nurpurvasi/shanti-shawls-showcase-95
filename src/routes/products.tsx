@@ -54,6 +54,7 @@ function ProductsPage() {
     <div className="min-h-screen bg-cream">
       <SiteHeader />
       <main id="main" tabIndex={-1} className="focus:outline-none">
+      <h1 className="sr-only">The Collection — Hand-woven Kashmiri shawls, suits &amp; sarees</h1>
       <section className="px-6 md:px-10 pt-16 pb-10">
         <div className="mx-auto max-w-6xl">
           <SectionHeading eyebrow="The Collection" title="Hand-woven, one piece at a time" align="left">
