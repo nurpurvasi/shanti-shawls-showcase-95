@@ -3,3 +3,5 @@ Allow: /
 Disallow: /admin
 Disallow: /auth
 Disallow: /_authenticated
+
+Sitemap: /sitemap.xml
