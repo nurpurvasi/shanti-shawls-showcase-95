@@ -32,6 +32,7 @@ function FaqPage() {
     <div className="min-h-screen bg-cream">
       <SiteHeader />
       <main id="main" tabIndex={-1} className="focus:outline-none">
+      <h1 className="sr-only">Frequently Asked Questions</h1>
       <section className="px-6 md:px-10 py-20">
         <div className="mx-auto max-w-3xl">
           <SectionHeading eyebrow="Frequently Asked" title="Quietly, all the practical questions" />
