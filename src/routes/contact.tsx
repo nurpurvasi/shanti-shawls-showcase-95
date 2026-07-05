@@ -64,6 +64,7 @@ function ContactPage() {
     <div className="min-h-screen bg-cream">
       <SiteHeader />
       <main id="main" tabIndex={-1} className="focus:outline-none">
+      <h1 className="sr-only">Contact Shanti Shawls Emporium — Nurpur, Kangra</h1>
       <section className="px-6 md:px-10 py-20">
         <div className="mx-auto max-w-6xl grid md:grid-cols-2 gap-16">
           <div>
