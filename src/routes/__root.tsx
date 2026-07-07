@@ -63,7 +63,19 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
+  loader: async ({ context }) => {
+    try {
+      const data = await context.queryClient.ensureQueryData({
+        queryKey: ["storefront"],
+        queryFn: () => fetchStorefront(),
+      });
+      const brand = (data.settings.brand as any) ?? {};
+      return { faviconUrl: brand.favicon_url as string | undefined };
+    } catch {
+      return { faviconUrl: undefined };
+    }
+  },
+  head: ({ loaderData }) => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
