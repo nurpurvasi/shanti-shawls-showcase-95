@@ -64,7 +64,7 @@ function ContactPage() {
 
   return (
     <div className="min-h-screen bg-cream">
-      <SiteHeader />
+      <SiteHeader brand={(data.settings.brand as any) ?? {}} />
       <main id="main" tabIndex={-1} className="focus:outline-none">
       <h1 className="sr-only">Contact Shanti Shawls Emporium — Nurpur, Kangra</h1>
       <section className="px-6 md:px-10 py-20">
@@ -81,7 +81,7 @@ function ContactPage() {
                 <div className="flex gap-4"><Clock className="size-4 text-gold mt-1 shrink-0" /><div><dt className="eyebrow">Hours</dt><dd className="mt-1 text-ink">{contact.hours}</dd></div></div>
               )}
               {contact.phone && (
-                <div className="flex gap-4"><Phone className="size-4 text-gold mt-1 shrink-0" /><div><dt className="eyebrow">Phone</dt><dd className="mt-1"><a href={telLink(contact.phone)} className="text-maroon">{contact.phone}</a></dd></div></div>
+                <div className="flex gap-4"><Phone className="size-4 text-gold mt-1 shrink-0" /><div><dt className="eyebrow">Phone</dt><dd className="mt-1 space-y-1"><a href={telLink(contact.phone)} className="text-maroon block">{contact.phone}</a>{contact.phone2 && <a href={telLink(contact.phone2)} className="text-maroon block">{contact.phone2}</a>}</dd></div></div>
               )}
               {contact.whatsapp && (
                 <div className="flex gap-4"><MessageCircle className="size-4 text-gold mt-1 shrink-0" /><div><dt className="eyebrow">WhatsApp</dt><dd className="mt-1"><a href={whatsappLink(contact.whatsapp)} target="_blank" rel="noopener noreferrer" className="text-maroon">{contact.whatsapp}</a></dd></div></div>

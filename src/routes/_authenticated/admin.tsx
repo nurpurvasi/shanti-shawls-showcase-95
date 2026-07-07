@@ -453,6 +453,7 @@ function SettingsTab({ data, onChange }: any) {
   const [hero, setHero] = useState<any>(data.settings.hero ?? {});
   const [brand, setBrand] = useState<any>(data.settings.brand ?? {});
   const [social, setSocial] = useState<any>(data.settings.social ?? {});
+  const [designer, setDesigner] = useState<any>(data.settings.designer ?? {});
   const [busy, setBusy] = useState(false);
 
   async function saveAll() {
@@ -463,6 +464,7 @@ function SettingsTab({ data, onChange }: any) {
         upsertSetting({ data: { key: "hero", value: hero } }),
         upsertSetting({ data: { key: "brand", value: brand } }),
         upsertSetting({ data: { key: "social", value: social } }),
+        upsertSetting({ data: { key: "designer", value: designer } }),
       ]);
       toast.success("Settings saved");
       onChange();
@@ -472,17 +474,27 @@ function SettingsTab({ data, onChange }: any) {
     const url = await pickAndUpload("hero");
     if (url) setHero({ ...hero, image_url: url });
   }
+  async function uploadLogo() {
+    const url = await pickAndUpload("brand");
+    if (url) setBrand({ ...brand, logo_url: url });
+  }
+  async function uploadFavicon() {
+    const url = await pickAndUpload("brand");
+    if (url) setBrand({ ...brand, favicon_url: url });
+  }
 
   return (
     <div className="grid md:grid-cols-2 gap-6 max-w-5xl">
       <section className="rounded-2xl border border-maroon/10 bg-ivory p-6 space-y-4">
         <h3 className="font-display text-xl text-maroon">Contact</h3>
         <Field label="Phone"><input className={inputCls} value={contact.phone ?? ""} onChange={(e) => setContact({ ...contact, phone: e.target.value })} /></Field>
+        <Field label="Second Phone (optional)"><input className={inputCls} value={contact.phone2 ?? ""} onChange={(e) => setContact({ ...contact, phone2: e.target.value })} /></Field>
         <Field label="WhatsApp (with country code)"><input className={inputCls} value={contact.whatsapp ?? ""} onChange={(e) => setContact({ ...contact, whatsapp: e.target.value })} placeholder="+91..." /></Field>
         <Field label="Email"><input className={inputCls} value={contact.email ?? ""} onChange={(e) => setContact({ ...contact, email: e.target.value })} /></Field>
         <Field label="Address"><textarea rows={2} className={inputCls} value={contact.address ?? ""} onChange={(e) => setContact({ ...contact, address: e.target.value })} /></Field>
         <Field label="Business Hours"><input className={inputCls} value={contact.hours ?? ""} onChange={(e) => setContact({ ...contact, hours: e.target.value })} /></Field>
-        <Field label="Google Maps Embed URL"><input className={inputCls} value={contact.map_embed ?? ""} onChange={(e) => setContact({ ...contact, map_embed: e.target.value })} placeholder="https://www.google.com/maps/embed?..." /></Field>
+        <Field label="Google Maps Embed URL (iframe src)"><input className={inputCls} value={contact.map_embed ?? ""} onChange={(e) => setContact({ ...contact, map_embed: e.target.value })} placeholder="https://www.google.com/maps/embed?..." /></Field>
+        <Field label="Google Maps Share Link (footer)"><input className={inputCls} value={contact.maps_link ?? ""} onChange={(e) => setContact({ ...contact, maps_link: e.target.value })} placeholder="https://maps.app.goo.gl/..." /></Field>
       </section>
 
       <section className="rounded-2xl border border-maroon/10 bg-ivory p-6 space-y-4">
@@ -496,18 +508,51 @@ function SettingsTab({ data, onChange }: any) {
             <button onClick={uploadHero} className="text-xs text-maroon flex items-center gap-1"><Upload className="size-3.5" /> Upload</button>
           </div>
         </Field>
-
-        <h3 className="font-display text-xl text-maroon pt-4 border-t border-maroon/10">Brand</h3>
-        <Field label="Tagline"><input className={inputCls} value={brand.tagline ?? ""} onChange={(e) => setBrand({ ...brand, tagline: e.target.value })} /></Field>
-        <Field label="Established Year"><input className={inputCls} value={brand.established ?? ""} onChange={(e) => setBrand({ ...brand, established: e.target.value })} /></Field>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Primary Button Label"><input className={inputCls} value={hero.cta_primary_label ?? ""} onChange={(e) => setHero({ ...hero, cta_primary_label: e.target.value })} placeholder="View Products" /></Field>
+          <Field label="Primary Button Link"><input className={inputCls} value={hero.cta_primary_link ?? ""} onChange={(e) => setHero({ ...hero, cta_primary_link: e.target.value })} placeholder="/products" /></Field>
+          <Field label="Secondary Button Label"><input className={inputCls} value={hero.cta_secondary_label ?? ""} onChange={(e) => setHero({ ...hero, cta_secondary_label: e.target.value })} placeholder="Contact Us" /></Field>
+          <Field label="Secondary Button Link"><input className={inputCls} value={hero.cta_secondary_link ?? ""} onChange={(e) => setHero({ ...hero, cta_secondary_link: e.target.value })} placeholder="/contact" /></Field>
+        </div>
       </section>
 
       <section className="rounded-2xl border border-maroon/10 bg-ivory p-6 space-y-4 md:col-span-2">
-        <h3 className="font-display text-xl text-maroon">Social Links</h3>
+        <h3 className="font-display text-xl text-maroon">Brand Identity</h3>
         <div className="grid md:grid-cols-2 gap-4">
-          <Field label="Facebook URL"><input className={inputCls} value={social.facebook ?? ""} onChange={(e) => setSocial({ ...social, facebook: e.target.value })} placeholder="https://www.facebook.com/..." /></Field>
-          <Field label="Instagram URL"><input className={inputCls} value={social.instagram ?? ""} onChange={(e) => setSocial({ ...social, instagram: e.target.value })} placeholder="https://www.instagram.com/..." /></Field>
+          <Field label="Brand Name"><input className={inputCls} value={brand.name ?? ""} onChange={(e) => setBrand({ ...brand, name: e.target.value })} placeholder="Shanti Shawls Emporium" /></Field>
+          <Field label="Established Year"><input className={inputCls} value={brand.established ?? ""} onChange={(e) => setBrand({ ...brand, established: e.target.value })} /></Field>
+          <Field label="Tagline"><input className={inputCls} value={brand.tagline ?? ""} onChange={(e) => setBrand({ ...brand, tagline: e.target.value })} /></Field>
+          <Field label="Copyright Text (overrides default)"><input className={inputCls} value={brand.copyright ?? ""} onChange={(e) => setBrand({ ...brand, copyright: e.target.value })} placeholder="© 2026 Shanti Shawls Emporium. All rights reserved." /></Field>
         </div>
+        <div className="grid md:grid-cols-2 gap-4 pt-2">
+          <Field label="Logo Image (leave blank to keep text wordmark)">
+            <div className="flex gap-3 items-center">
+              {brand.logo_url && <img src={brand.logo_url} className="h-12 w-auto max-w-[160px] object-contain bg-cream rounded" alt="" />}
+              <button onClick={uploadLogo} className="text-xs text-maroon flex items-center gap-1"><Upload className="size-3.5" /> Upload</button>
+              {brand.logo_url && <button onClick={() => setBrand({ ...brand, logo_url: "" })} className="text-xs text-muted-foreground hover:text-maroon">Clear</button>}
+            </div>
+          </Field>
+          <Field label="Favicon (square PNG/ICO recommended)">
+            <div className="flex gap-3 items-center">
+              {brand.favicon_url && <img src={brand.favicon_url} className="size-10 rounded bg-cream object-contain" alt="" />}
+              <button onClick={uploadFavicon} className="text-xs text-maroon flex items-center gap-1"><Upload className="size-3.5" /> Upload</button>
+              {brand.favicon_url && <button onClick={() => setBrand({ ...brand, favicon_url: "" })} className="text-xs text-muted-foreground hover:text-maroon">Clear</button>}
+            </div>
+          </Field>
+        </div>
+      </section>
+
+      <section className="rounded-2xl border border-maroon/10 bg-ivory p-6 space-y-4">
+        <h3 className="font-display text-xl text-maroon">Social Links</h3>
+        <Field label="Facebook URL"><input className={inputCls} value={social.facebook ?? ""} onChange={(e) => setSocial({ ...social, facebook: e.target.value })} placeholder="https://www.facebook.com/..." /></Field>
+        <Field label="Instagram URL"><input className={inputCls} value={social.instagram ?? ""} onChange={(e) => setSocial({ ...social, instagram: e.target.value })} placeholder="https://www.instagram.com/..." /></Field>
+      </section>
+
+      <section className="rounded-2xl border border-maroon/10 bg-ivory p-6 space-y-4">
+        <h3 className="font-display text-xl text-maroon">Footer Credit</h3>
+        <Field label="Designer Name"><input className={inputCls} value={designer.name ?? ""} onChange={(e) => setDesigner({ ...designer, name: e.target.value })} /></Field>
+        <Field label="Designer Email"><input className={inputCls} value={designer.email ?? ""} onChange={(e) => setDesigner({ ...designer, email: e.target.value })} /></Field>
+        <Field label="Designer Phone"><input className={inputCls} value={designer.phone ?? ""} onChange={(e) => setDesigner({ ...designer, phone: e.target.value })} /></Field>
       </section>
 
       <div className="md:col-span-2"><PrimaryBtn onClick={saveAll} disabled={busy}><Save className="size-3.5" /> Save all settings</PrimaryBtn></div>

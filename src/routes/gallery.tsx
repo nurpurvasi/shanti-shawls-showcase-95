@@ -35,7 +35,7 @@ function GalleryPage() {
 
   return (
     <div className="min-h-screen bg-cream">
-      <SiteHeader />
+      <SiteHeader brand={(data.settings.brand as any) ?? {}} />
       <main id="main" tabIndex={-1} className="focus:outline-none">
       <h1 className="sr-only">Gallery — Inside the emporium</h1>
       <section className="px-6 md:px-10 py-16">
