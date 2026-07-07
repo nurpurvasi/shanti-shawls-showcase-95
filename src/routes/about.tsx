@@ -34,7 +34,7 @@ function AboutPage() {
   const brand = (data.settings.brand as any) ?? {};
   return (
     <div className="min-h-screen bg-cream">
-      <SiteHeader />
+      <SiteHeader brand={brand} />
       <main id="main" tabIndex={-1} className="focus:outline-none">
       <article className="px-6 md:px-10 py-20">
         <div className="mx-auto max-w-3xl">

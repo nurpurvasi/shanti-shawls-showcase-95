@@ -32,7 +32,7 @@ function FaqPage() {
   const faqs = data.sections.filter((s) => s.section_key === "faq");
   return (
     <div className="min-h-screen bg-cream">
-      <SiteHeader />
+      <SiteHeader brand={(data.settings.brand as any) ?? {}} />
       <main id="main" tabIndex={-1} className="focus:outline-none">
       <h1 className="sr-only">Frequently Asked Questions</h1>
       <section className="px-6 md:px-10 py-20">

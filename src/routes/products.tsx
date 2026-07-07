@@ -54,7 +54,7 @@ function ProductsPage() {
 
   return (
     <div className="min-h-screen bg-cream">
-      <SiteHeader />
+      <SiteHeader brand={(data.settings.brand as any) ?? {}} />
       <main id="main" tabIndex={-1} className="focus:outline-none">
       <h1 className="sr-only">The Collection — Hand-woven Kashmiri shawls, suits &amp; sarees</h1>
       <section className="px-6 md:px-10 pt-16 pb-10">

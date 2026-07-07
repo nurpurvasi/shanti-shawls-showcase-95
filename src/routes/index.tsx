@@ -47,7 +47,7 @@ function HomePage() {
 
   return (
     <div className="min-h-screen bg-cream text-ink">
-      <SiteHeader />
+      <SiteHeader brand={brand} />
 
       <main id="main" tabIndex={-1} className="focus:outline-none">
       {/* HERO */}
@@ -62,18 +62,18 @@ function HomePage() {
               {hero.subtitle ?? "Premium shawls, stoles, ladies suits, sarees and traditional Himachali caps — crafted in the foothills of the Dhauladhar and trusted by families across India for over three decades."}
             </p>
             <div className="mt-10 flex flex-col sm:flex-row gap-3 max-w-md">
-              <Link
-                to="/products"
+              <a
+                href={hero.cta_primary_link || "/products"}
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-maroon px-7 py-3.5 text-xs font-medium uppercase tracking-[0.2em] text-cream hover:bg-maroon-deep transition"
               >
-                View Products <ArrowRight className="size-3.5" />
-              </Link>
-              <Link
-                to="/contact"
+                {hero.cta_primary_label || "View Products"} <ArrowRight className="size-3.5" />
+              </a>
+              <a
+                href={hero.cta_secondary_link || "/contact"}
                 className="inline-flex items-center justify-center gap-2 rounded-full border border-maroon/25 px-7 py-3.5 text-xs font-medium uppercase tracking-[0.2em] text-maroon hover:bg-maroon/5 transition"
               >
-                <Phone className="size-3.5" /> Contact Us
-              </Link>
+                <Phone className="size-3.5" /> {hero.cta_secondary_label || "Contact Us"}
+              </a>
               {contact.whatsapp && (
                 <a
                   href={whatsappLink(contact.whatsapp, "Hi Shanti Shawls, I'd like to know more.")}

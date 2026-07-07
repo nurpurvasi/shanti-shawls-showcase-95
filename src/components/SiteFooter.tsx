@@ -4,6 +4,7 @@ import { telLink, whatsappLink } from "@/lib/format";
 
 type Contact = {
   phone?: string;
+  phone2?: string;
   whatsapp?: string;
   email?: string;
   address?: string;
@@ -13,7 +14,7 @@ type Contact = {
 
 type Social = { facebook?: string; instagram?: string };
 type Designer = { name?: string; email?: string; phone?: string };
-type Brand = { name?: string; established?: string; tagline?: string };
+type Brand = { name?: string; established?: string; tagline?: string; copyright?: string };
 
 type Category = { slug: string; name: string };
 
@@ -109,6 +110,9 @@ export function SiteFooter({
               {contact?.phone && (
                 <li className="flex gap-2"><Phone className="size-4 mt-0.5 text-gold shrink-0" /><a href={telLink(contact.phone)} className="text-cream/70 hover:text-gold">{contact.phone}</a></li>
               )}
+              {contact?.phone2 && (
+                <li className="flex gap-2"><Phone className="size-4 mt-0.5 text-gold shrink-0" /><a href={telLink(contact.phone2)} className="text-cream/70 hover:text-gold">{contact.phone2}</a></li>
+              )}
               {contact?.whatsapp && (
                 <li className="flex gap-2"><MessageCircle className="size-4 mt-0.5 text-gold shrink-0" /><a href={whatsappLink(contact.whatsapp)} target="_blank" rel="noopener noreferrer" className="text-cream/70 hover:text-gold">{contact.whatsapp}</a></li>
               )}
@@ -124,7 +128,7 @@ export function SiteFooter({
 
         {/* Bottom bar */}
         <div className="mt-16 pt-6 border-t border-cream/15 flex flex-col md:flex-row justify-between gap-4 text-[10px] uppercase tracking-[0.3em] text-cream/75">
-          <span>© {new Date().getFullYear()} {brandName}. All rights reserved.</span>
+          <span>{brand?.copyright ?? `© ${new Date().getFullYear()} ${brandName}. All rights reserved.`}</span>
           <span>
             Designed &amp; Developed by{" "}
             <span className="text-gold normal-case tracking-normal">
