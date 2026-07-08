@@ -19,7 +19,7 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Shanti Shawls Emporium — Premium Woollen Shawls, Suits & Sarees | Nurpur, Kangra" },
-      { name: "description", content: "A trusted woollen garments and handicrafts emporium in Village Bodh, Jassur, Nurpur (Kangra), Himachal Pradesh. Premium shawls, ladies suits, winter stoles, sarees and traditional Himachali caps." },
+      { name: "description", content: "A trusted woollen garments and handicrafts emporium in Village Bodh, Jassur, Nurpur (Kangra), Himachal Pradesh." },
       { property: "og:title", content: "Shanti Shawls Emporium — Woollen heritage of Himachal Pradesh" },
       { property: "og:description", content: "Premium shawls, ladies suits, stoles, sarees & Himachali caps from Kangra." },
       { property: "og:url", content: "/" },
@@ -37,7 +37,14 @@ function HomePage() {
   const contact = (data.settings.contact as any) ?? {};
   const brand = (data.settings.brand as any) ?? {};
   const hero = (data.settings.hero as any) ?? {};
-  const whyUs = data.sections.filter((s) => s.section_key === "why_us");
+  const home = (data.settings.home as any) ?? {};
+
+  const bySection = (key: string) => data.sections.filter((s) => s.section_key === key && s.is_active !== false);
+  const whyUs = bySection("why_us");
+  const trustBadges = bySection("trust_badges");
+  const stats = bySection("home_stats");
+  const highlights = bySection("store_highlights");
+
   const featured = data.products.filter((p) => p.is_featured).slice(0, 3);
   const arrivals = data.products.filter((p) => p.is_new_arrival).slice(0, 4);
   const reviews = data.reviews.slice(0, 3);
@@ -47,6 +54,13 @@ function HomePage() {
 
   return (
     <div className="min-h-screen bg-cream text-ink">
+      {home.promo_text && (
+        <div className="bg-maroon text-cream text-center text-[11px] uppercase tracking-[0.25em] py-2 px-4">
+          {home.promo_link ? (
+            <a href={home.promo_link} className="hover:text-gold-soft transition">{home.promo_text}</a>
+          ) : home.promo_text}
+        </div>
+      )}
       <SiteHeader brand={brand} />
 
       <main id="main" tabIndex={-1} className="focus:outline-none">
@@ -56,7 +70,7 @@ function HomePage() {
           <div>
             <p className="eyebrow">{hero.eyebrow ?? `Kangra Valley · Himachal Pradesh · Est. ${brand.established ?? "1985"}`}</p>
             <h1 className="mt-5 font-display text-5xl md:text-7xl leading-[1.05] text-balance text-maroon">
-              {hero.title ? <>{hero.title}.</> : <>The Warmth of the <em className="italic">Himalayas</em>, Woven by Hand.</>}
+              {hero.title ?? "The Warmth of the Himalayas, Woven by Hand."}
             </h1>
             <p className="mt-6 max-w-md text-muted-foreground leading-relaxed">
               {hero.subtitle ?? "Premium shawls, stoles, ladies suits, sarees and traditional Himachali caps — crafted in the foothills of the Dhauladhar and trusted by families across India for over three decades."}
@@ -89,77 +103,129 @@ function HomePage() {
           <div className="relative grain-overlay rounded-3xl overflow-hidden bg-mist">
             <img
               src={hero.image_url || heroImg}
-              alt="Woman draped in a crimson Kashmiri pashmina shawl"
+              alt={hero.title ?? "Hero"}
               width={1024}
               height={1280}
               fetchPriority="high"
               className="w-full aspect-[4/5] object-cover"
             />
-            <div className="absolute bottom-6 left-6 bg-cream/95 backdrop-blur px-5 py-3 rounded-full text-[10px] uppercase tracking-[0.3em] text-maroon font-semibold">
-              Series No. 24-01
-            </div>
+            {hero.badge && (
+              <div className="absolute bottom-6 left-6 bg-cream/95 backdrop-blur px-5 py-3 rounded-full text-[10px] uppercase tracking-[0.3em] text-maroon font-semibold">
+                {hero.badge}
+              </div>
+            )}
           </div>
         </div>
       </section>
 
-      {/* CATEGORIES */}
-      <section className="px-6 md:px-10 py-20 bg-ivory">
-        <div className="mx-auto max-w-6xl">
-          <SectionHeading eyebrow="The Curations" title="Our Specialties" align="left">
-            Distinct weaving traditions, each preserved through generations of Kashmiri craftsmanship.
-          </SectionHeading>
-          <div className="mt-10 grid grid-cols-2 md:grid-cols-5 gap-4">
-            {data.categories.map((c) => (
-              <Link
-                to="/products"
-                search={{ category: c.slug } as any}
-                key={c.id}
-                className="group"
-              >
-                <div className="aspect-[4/5] overflow-hidden rounded-2xl bg-mist grain-overlay">
-                  <img
-                    src={c.image_url || categoryImages[c.slug] || categoryImages.pashmina}
-                    alt={c.name}
-                    loading="lazy"
-                    className="w-full h-full object-cover transition duration-700 group-hover:scale-105"
-                  />
-                </div>
-                <p className="mt-3 text-xs uppercase tracking-[0.2em] font-medium text-maroon">{c.name}</p>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* WHY CHOOSE US */}
-      <section className="px-6 md:px-10 py-24 bg-maroon text-cream relative overflow-hidden">
-        <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full border border-gold/20" />
-        <div className="absolute -bottom-32 -left-20 w-96 h-96 rounded-full border border-gold/10" />
-        <div className="mx-auto max-w-6xl relative">
-          <p className="eyebrow !text-gold-soft">Why Shanti</p>
-          <h2 className="mt-3 font-display text-4xl md:text-5xl text-balance max-w-2xl">
-            Fifty years of trust, woven into every thread.
-          </h2>
-          <div className="mt-14 grid md:grid-cols-2 gap-12">
-            {whyUs.map((w, i) => (
-              <div key={w.id} className="flex gap-5">
-                <span className="text-gold font-display italic text-2xl shrink-0 w-10">{String(i + 1).padStart(2, "0")}</span>
-                <div>
-                  <h3 className="text-base font-medium tracking-wide">{w.title}</h3>
-                  <p className="mt-2 text-cream/70 text-sm leading-relaxed">{w.subtitle}</p>
-                </div>
+      {/* TRUST BADGES */}
+      {trustBadges.length > 0 && (
+        <section className="px-6 md:px-10 py-10 border-y border-maroon/10 bg-ivory/60">
+          <div className="mx-auto max-w-6xl grid grid-cols-2 md:grid-cols-4 gap-6">
+            {trustBadges.map((b) => (
+              <div key={b.id} className="text-center">
+                <p className="font-display text-lg text-maroon">{b.title}</p>
+                {b.subtitle && <p className="mt-1 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">{b.subtitle}</p>}
               </div>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
+      )}
+
+      {/* CATEGORIES */}
+      {data.categories.length > 0 && (
+        <section className="px-6 md:px-10 py-20 bg-ivory">
+          <div className="mx-auto max-w-6xl">
+            <SectionHeading
+              eyebrow={home.categories_eyebrow ?? "The Curations"}
+              title={home.categories_title ?? "Our Specialities"}
+              align="left"
+            >
+              {home.categories_desc ?? "Distinct weaving traditions, each preserved through generations of Himachali craftsmanship."}
+            </SectionHeading>
+            <div className="mt-10 grid grid-cols-2 md:grid-cols-5 gap-4">
+              {data.categories.map((c) => (
+                <Link to="/products" search={{ category: c.slug } as any} key={c.id} className="group">
+                  <div className="aspect-[4/5] overflow-hidden rounded-2xl bg-mist grain-overlay">
+                    <img
+                      src={c.image_url || categoryImages[c.slug] || categoryImages.pashmina}
+                      alt={c.name}
+                      loading="lazy"
+                      className="w-full h-full object-cover transition duration-700 group-hover:scale-105"
+                    />
+                  </div>
+                  <p className="mt-3 text-xs uppercase tracking-[0.2em] font-medium text-maroon">{c.name}</p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* WHY CHOOSE US */}
+      {whyUs.length > 0 && (
+        <section className="px-6 md:px-10 py-24 bg-maroon text-cream relative overflow-hidden">
+          <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full border border-gold/20" />
+          <div className="absolute -bottom-32 -left-20 w-96 h-96 rounded-full border border-gold/10" />
+          <div className="mx-auto max-w-6xl relative">
+            <p className="eyebrow !text-gold-soft">{home.why_eyebrow ?? "Why Shanti"}</p>
+            <h2 className="mt-3 font-display text-4xl md:text-5xl text-balance max-w-2xl">
+              {home.why_title ?? "Fifty years of trust, woven into every thread."}
+            </h2>
+            <div className="mt-14 grid md:grid-cols-2 gap-12">
+              {whyUs.map((w, i) => (
+                <div key={w.id} className="flex gap-5">
+                  <span className="text-gold font-display italic text-2xl shrink-0 w-10">{String(i + 1).padStart(2, "0")}</span>
+                  <div>
+                    <h3 className="text-base font-medium tracking-wide">{w.title}</h3>
+                    <p className="mt-2 text-cream/70 text-sm leading-relaxed">{w.subtitle}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* STORE HIGHLIGHTS */}
+      {highlights.length > 0 && (
+        <section className="px-6 md:px-10 py-24">
+          <div className="mx-auto max-w-6xl">
+            <div className="grid md:grid-cols-3 gap-6">
+              {highlights.map((h) => (
+                <article key={h.id} className="rounded-3xl bg-ivory border border-maroon/5 overflow-hidden">
+                  {h.image_url && <img src={h.image_url} alt={h.title ?? ""} loading="lazy" className="w-full aspect-[4/3] object-cover" />}
+                  <div className="p-6">
+                    <h3 className="font-display text-xl text-maroon">{h.title}</h3>
+                    {h.content && <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{h.content}</p>}
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* CUSTOMER STATS */}
+      {stats.length > 0 && (
+        <section className="px-6 md:px-10 py-16 bg-ivory">
+          <div className="mx-auto max-w-5xl grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+            {stats.map((s) => (
+              <div key={s.id}>
+                <p className="font-display text-4xl md:text-5xl text-maroon">{s.title}</p>
+                {s.subtitle && <p className="mt-2 text-[10px] uppercase tracking-[0.22em] text-muted-foreground">{s.subtitle}</p>}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* LATEST ARRIVALS */}
       {arrivals.length > 0 && (
         <section className="px-6 md:px-10 py-24">
           <div className="mx-auto max-w-6xl">
             <div className="flex items-end justify-between mb-12">
-              <SectionHeading eyebrow="New Arrivals" title="Latest from the loom" align="left" />
+              <SectionHeading eyebrow={home.arrivals_eyebrow ?? "New Arrivals"} title={home.arrivals_title ?? "Latest from the loom"} align="left" />
               <Link to="/products" className="hidden md:inline text-xs uppercase tracking-[0.25em] text-gold border-b border-gold/40 pb-1">
                 View all
               </Link>
@@ -176,7 +242,7 @@ function HomePage() {
         <section className="px-6 md:px-10 py-24 bg-ivory">
           <div className="mx-auto max-w-6xl grid md:grid-cols-2 gap-12 items-center">
             <div className="grain-overlay rounded-3xl overflow-hidden bg-mist">
-              <img src={detailImg2} alt="Folded heritage shawls" loading="lazy" className="w-full aspect-[4/5] object-cover" />
+              <img src={featured[0].images?.[0] || detailImg2} alt={featured[0].name} loading="lazy" className="w-full aspect-[4/5] object-cover" />
             </div>
             <div>
               <p className="eyebrow">The Heritage Piece</p>
@@ -200,7 +266,7 @@ function HomePage() {
       {reviews.length > 0 && (
         <section className="px-6 md:px-10 py-24">
           <div className="mx-auto max-w-6xl">
-            <SectionHeading eyebrow="Customer Stories" title="Words from our patrons" />
+            <SectionHeading eyebrow={home.reviews_eyebrow ?? "Customer Stories"} title={home.reviews_title ?? "Words from our patrons"} />
             <div className="mt-14 grid md:grid-cols-3 gap-8">
               {reviews.map((r) => (
                 <figure key={r.id} className="rounded-3xl bg-ivory p-8 border border-maroon/5">
@@ -226,7 +292,7 @@ function HomePage() {
       <section className="px-6 md:px-10 py-24 bg-ivory">
         <div className="mx-auto max-w-6xl">
           <div className="flex items-end justify-between mb-10">
-            <SectionHeading eyebrow="Inside the Emporium" title="The store, the looms, the people" align="left" />
+            <SectionHeading eyebrow={home.gallery_eyebrow ?? "Inside the Emporium"} title={home.gallery_title ?? "The store, the looms, the people"} align="left" />
             <Link to="/gallery" className="hidden md:inline text-xs uppercase tracking-[0.25em] text-gold border-b border-gold/40 pb-1">
               Open gallery
             </Link>
@@ -245,8 +311,8 @@ function HomePage() {
       <section className="px-6 md:px-10 py-24">
         <div className="mx-auto max-w-6xl grid md:grid-cols-2 gap-12">
           <div>
-            <SectionHeading eyebrow="Visit Us" title="Step into the showroom" align="left">
-              Walk among hand-loomed pieces, feel the weight of real pashmina, and meet the family behind fifty years of work.
+            <SectionHeading eyebrow={home.visit_eyebrow ?? "Visit Us"} title={home.visit_title ?? "Step into the showroom"} align="left">
+              {home.visit_desc ?? "Walk among hand-loomed pieces, feel the weight of real pashmina, and meet the family behind decades of work."}
             </SectionHeading>
             <dl className="mt-8 space-y-4 text-sm">
               {contact.address && <div><dt className="eyebrow">Address</dt><dd className="mt-1 text-ink">{contact.address}</dd></div>}
@@ -271,7 +337,7 @@ function HomePage() {
       </section>
       </main>
 
-      <SiteFooter contact={contact} social={(data.settings.social as any) ?? {}} designer={(data.settings.designer as any) ?? {}} brand={(data.settings.brand as any) ?? {}} categories={data.categories} />
+      <SiteFooter contact={contact} social={(data.settings.social as any) ?? {}} designer={(data.settings.designer as any) ?? {}} brand={brand} categories={data.categories} />
       <WhatsAppFab number={contact.whatsapp} phone={contact.phone} />
     </div>
   );
