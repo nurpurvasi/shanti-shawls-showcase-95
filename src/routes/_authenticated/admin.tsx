@@ -397,7 +397,17 @@ function ReviewForm({ initial, onSaved, onCancel }: any) {
   );
 }
 
-// ---------- HOMEPAGE SECTIONS ----------
+// ---------- PAGE SECTIONS (why us, trust badges, stats, highlights, timeline, faq) ----------
+
+type FieldKey = "title" | "subtitle" | "content" | "image";
+const SECTION_TYPES: Record<string, { label: string; help: string; fields: FieldKey[]; titleLabel?: string; subtitleLabel?: string; contentLabel?: string }> = {
+  why_us:          { label: "Why Choose Us",      help: "Bulleted points on the home page.",                fields: ["title","subtitle"] },
+  trust_badges:    { label: "Trust Badges",       help: "Short badges (e.g. '3 Generations', 'Pure Wool').", fields: ["title","subtitle"] },
+  home_stats:      { label: "Customer Statistics",help: "Number + label pairs.",                             fields: ["title","subtitle"], titleLabel: "Number (e.g. 40+)", subtitleLabel: "Label (e.g. Years serving families)" },
+  store_highlights:{ label: "Store Highlights",   help: "Feature cards on the home page.",                   fields: ["title","content","image"] },
+  timeline:        { label: "About – Timeline",   help: "Milestones on the About page.",                     fields: ["title","subtitle","content"], titleLabel: "Year", subtitleLabel: "Heading", contentLabel: "Description" },
+  faq:             { label: "FAQ",                help: "Questions & answers.",                              fields: ["title","content"], titleLabel: "Question", contentLabel: "Answer" },
+};
 
 function SectionsTab({ data, onChange }: any) {
   const grouped = useMemo(() => {
@@ -407,11 +417,11 @@ function SectionsTab({ data, onChange }: any) {
   }, [data.sections]);
 
   async function addNew(key: string) {
-    try { await upsertSection({ data: { section_key: key, title: "New item", content: "", sort_order: (grouped[key]?.length ?? 0) } }); onChange(); }
+    try { await upsertSection({ data: { section_key: key, title: "New item", sort_order: (grouped[key]?.length ?? 0), is_active: true } }); onChange(); }
     catch (e: any) { toast.error(e?.message ?? "Failed"); }
   }
   async function save(s: any) {
-    try { await upsertSection({ data: s }); toast.success("Saved"); onChange(); }
+    try { await upsertSection({ data: { ...s, sort_order: Number(s.sort_order || 0) } }); toast.success("Saved"); onChange(); }
     catch (e: any) { toast.error(e?.message ?? "Failed"); }
   }
   async function remove(id: string) {
@@ -420,34 +430,54 @@ function SectionsTab({ data, onChange }: any) {
   }
 
   return (
-    <div className="space-y-10">
-      {(["why_us","faq"] as const).map((key) => (
-        <div key={key}>
-          <div className="flex justify-between items-center mb-3">
-            <h2 className="font-display text-2xl text-maroon capitalize">{key.replace("_"," ")}</h2>
+    <div className="space-y-12">
+      <p className="text-sm text-muted-foreground max-w-2xl">Add, edit, reorder or hide the modular blocks that render on your public pages. Changes go live as soon as you save.</p>
+      {Object.entries(SECTION_TYPES).map(([key, cfg]) => (
+        <section key={key}>
+          <div className="flex justify-between items-start mb-1 gap-4 flex-wrap">
+            <div>
+              <h2 className="font-display text-2xl text-maroon">{cfg.label}</h2>
+              <p className="text-xs text-muted-foreground">{cfg.help}</p>
+            </div>
             <PrimaryBtn onClick={() => addNew(key)}><Plus className="size-3.5" /> Add</PrimaryBtn>
           </div>
-          <div className="space-y-3">
-            {(grouped[key] ?? []).map((s) => <SectionRow key={s.id} item={s} onSave={save} onRemove={remove} hasSubtitle={key === "why_us"} />)}
+          <div className="space-y-3 mt-4">
+            {(grouped[key] ?? []).length === 0 && <p className="text-xs text-muted-foreground italic">No items yet.</p>}
+            {(grouped[key] ?? []).map((s) => <SectionRow key={s.id} item={s} cfg={cfg} onSave={save} onRemove={remove} />)}
           </div>
-        </div>
+        </section>
       ))}
     </div>
   );
 }
 
-function SectionRow({ item, onSave, onRemove, hasSubtitle }: any) {
+function SectionRow({ item, cfg, onSave, onRemove }: any) {
   const [f, setF] = useState<any>(item);
   useEffect(() => setF(item), [item]);
+  async function pickImg() { const u = await pickAndUpload("sections"); if (u) setF({ ...f, image_url: u }); }
   return (
-    <div className="rounded-2xl border border-maroon/10 bg-ivory p-5 grid gap-3 md:grid-cols-[1fr_2fr_auto]">
-      <input className={inputCls} value={f.title ?? ""} onChange={(e) => setF({ ...f, title: e.target.value })} placeholder="Title" />
-      {hasSubtitle
-        ? <input className={inputCls} value={f.subtitle ?? ""} onChange={(e) => setF({ ...f, subtitle: e.target.value })} placeholder="Subtitle" />
-        : <textarea rows={2} className={inputCls} value={f.content ?? ""} onChange={(e) => setF({ ...f, content: e.target.value })} placeholder="Answer" />}
-      <div className="flex gap-2">
-        <button onClick={() => onSave(f)} className="rounded-full bg-maroon text-cream px-4 py-2 text-xs uppercase tracking-[0.18em]"><Save className="size-3.5" /></button>
-        <button onClick={() => onRemove(f.id)} className="rounded-full border border-maroon/20 px-4 py-2 text-xs"><Trash2 className="size-3.5" /></button>
+    <div className="rounded-2xl border border-maroon/10 bg-ivory p-5 space-y-3">
+      <div className="grid gap-3 md:grid-cols-2">
+        {cfg.fields.includes("title") && <Field label={cfg.titleLabel ?? "Title"}><input className={inputCls} value={f.title ?? ""} onChange={(e) => setF({ ...f, title: e.target.value })} /></Field>}
+        {cfg.fields.includes("subtitle") && <Field label={cfg.subtitleLabel ?? "Subtitle"}><input className={inputCls} value={f.subtitle ?? ""} onChange={(e) => setF({ ...f, subtitle: e.target.value })} /></Field>}
+      </div>
+      {cfg.fields.includes("content") && <Field label={cfg.contentLabel ?? "Content"}><textarea rows={2} className={inputCls} value={f.content ?? ""} onChange={(e) => setF({ ...f, content: e.target.value })} /></Field>}
+      {cfg.fields.includes("image") && (
+        <Field label="Image">
+          <div className="flex gap-3 items-center">
+            {f.image_url && <img src={f.image_url} className="size-16 rounded-lg object-cover bg-mist" alt="" />}
+            <button onClick={pickImg} className="text-xs text-maroon flex items-center gap-1"><Upload className="size-3.5" /> Upload</button>
+            {f.image_url && <button onClick={() => setF({ ...f, image_url: "" })} className="text-xs text-muted-foreground hover:text-maroon">Clear</button>}
+          </div>
+        </Field>
+      )}
+      <div className="flex flex-wrap items-center gap-4">
+        <Field label="Order"><input type="number" className={inputCls + " w-24"} value={f.sort_order ?? 0} onChange={(e) => setF({ ...f, sort_order: e.target.value })} /></Field>
+        <label className="flex items-center gap-2 text-xs mt-4"><input type="checkbox" checked={f.is_active !== false} onChange={(e) => setF({ ...f, is_active: e.target.checked })} /> Visible on site</label>
+        <div className="ml-auto flex gap-2 mt-4">
+          <button onClick={() => onSave(f)} className="rounded-full bg-maroon text-cream px-4 py-2 text-xs uppercase tracking-[0.18em]"><Save className="size-3.5 inline" /> Save</button>
+          <button onClick={() => onRemove(f.id)} className="rounded-full border border-maroon/20 px-4 py-2 text-xs"><Trash2 className="size-3.5" /></button>
+        </div>
       </div>
     </div>
   );
@@ -461,6 +491,8 @@ function SettingsTab({ data, onChange }: any) {
   const [brand, setBrand] = useState<any>(data.settings.brand ?? {});
   const [social, setSocial] = useState<any>(data.settings.social ?? {});
   const [designer, setDesigner] = useState<any>(data.settings.designer ?? {});
+  const [home, setHome] = useState<any>(data.settings.home ?? {});
+  const [about, setAbout] = useState<any>(data.settings.about ?? {});
   const [busy, setBusy] = useState(false);
 
   async function saveAll() {
@@ -472,23 +504,18 @@ function SettingsTab({ data, onChange }: any) {
         upsertSetting({ data: { key: "brand", value: brand } }),
         upsertSetting({ data: { key: "social", value: social } }),
         upsertSetting({ data: { key: "designer", value: designer } }),
+        upsertSetting({ data: { key: "home", value: home } }),
+        upsertSetting({ data: { key: "about", value: about } }),
       ]);
-      toast.success("Settings saved");
+      toast.success("Settings saved — live on the site");
       onChange();
     } catch (e: any) { toast.error(e?.message ?? "Failed"); } finally { setBusy(false); }
   }
-  async function uploadHero() {
-    const url = await pickAndUpload("hero");
-    if (url) setHero({ ...hero, image_url: url });
-  }
-  async function uploadLogo() {
-    const url = await pickAndUpload("brand");
-    if (url) setBrand({ ...brand, logo_url: url });
-  }
-  async function uploadFavicon() {
-    const url = await pickAndUpload("brand");
-    if (url) setBrand({ ...brand, favicon_url: url });
-  }
+  async function uploadHero() { const url = await pickAndUpload("hero"); if (url) setHero({ ...hero, image_url: url }); }
+  async function uploadLogo() { const url = await pickAndUpload("brand"); if (url) setBrand({ ...brand, logo_url: url }); }
+  async function uploadFavicon() { const url = await pickAndUpload("brand"); if (url) setBrand({ ...brand, favicon_url: url }); }
+  async function uploadAboutImg() { const url = await pickAndUpload("about"); if (url) setAbout({ ...about, image_url: url }); }
+  async function uploadFounderImg() { const url = await pickAndUpload("about"); if (url) setAbout({ ...about, founder_image_url: url }); }
 
   return (
     <div className="grid md:grid-cols-2 gap-6 max-w-5xl">
@@ -515,6 +542,7 @@ function SettingsTab({ data, onChange }: any) {
             <button onClick={uploadHero} className="text-xs text-maroon flex items-center gap-1"><Upload className="size-3.5" /> Upload</button>
           </div>
         </Field>
+        <Field label="Image caption badge (e.g. Series No. 24-01)"><input className={inputCls} value={hero.badge ?? ""} onChange={(e) => setHero({ ...hero, badge: e.target.value })} /></Field>
         <div className="grid grid-cols-2 gap-3">
           <Field label="Primary Button Label"><input className={inputCls} value={hero.cta_primary_label ?? ""} onChange={(e) => setHero({ ...hero, cta_primary_label: e.target.value })} placeholder="View Products" /></Field>
           <Field label="Primary Button Link"><input className={inputCls} value={hero.cta_primary_link ?? ""} onChange={(e) => setHero({ ...hero, cta_primary_link: e.target.value })} placeholder="/products" /></Field>
@@ -524,12 +552,75 @@ function SettingsTab({ data, onChange }: any) {
       </section>
 
       <section className="rounded-2xl border border-maroon/10 bg-ivory p-6 space-y-4 md:col-span-2">
+        <h3 className="font-display text-xl text-maroon">Home Page — Copy</h3>
+        <p className="text-xs text-muted-foreground">Section headings and promotional strip that appear on the home page. Leave blank to hide.</p>
+        <div className="grid md:grid-cols-2 gap-4">
+          <Field label="Promo strip text (top bar)"><input className={inputCls} value={home.promo_text ?? ""} onChange={(e) => setHome({ ...home, promo_text: e.target.value })} placeholder="Free shipping across India this winter" /></Field>
+          <Field label="Promo strip link (optional)"><input className={inputCls} value={home.promo_link ?? ""} onChange={(e) => setHome({ ...home, promo_link: e.target.value })} placeholder="/products" /></Field>
+        </div>
+        <div className="grid md:grid-cols-2 gap-4 pt-2">
+          <Field label="Collections eyebrow"><input className={inputCls} value={home.categories_eyebrow ?? ""} onChange={(e) => setHome({ ...home, categories_eyebrow: e.target.value })} placeholder="The Curations" /></Field>
+          <Field label="Collections title"><input className={inputCls} value={home.categories_title ?? ""} onChange={(e) => setHome({ ...home, categories_title: e.target.value })} placeholder="Our Specialities" /></Field>
+          <Field label="Collections description" ><input className={inputCls} value={home.categories_desc ?? ""} onChange={(e) => setHome({ ...home, categories_desc: e.target.value })} /></Field>
+          <Field label="Why-us eyebrow"><input className={inputCls} value={home.why_eyebrow ?? ""} onChange={(e) => setHome({ ...home, why_eyebrow: e.target.value })} placeholder="Why Shanti" /></Field>
+          <Field label="Why-us title"><input className={inputCls} value={home.why_title ?? ""} onChange={(e) => setHome({ ...home, why_title: e.target.value })} placeholder="Fifty years of trust, woven into every thread." /></Field>
+          <Field label="New arrivals eyebrow"><input className={inputCls} value={home.arrivals_eyebrow ?? ""} onChange={(e) => setHome({ ...home, arrivals_eyebrow: e.target.value })} placeholder="New Arrivals" /></Field>
+          <Field label="New arrivals title"><input className={inputCls} value={home.arrivals_title ?? ""} onChange={(e) => setHome({ ...home, arrivals_title: e.target.value })} placeholder="Latest from the loom" /></Field>
+          <Field label="Reviews eyebrow"><input className={inputCls} value={home.reviews_eyebrow ?? ""} onChange={(e) => setHome({ ...home, reviews_eyebrow: e.target.value })} placeholder="Customer Stories" /></Field>
+          <Field label="Reviews title"><input className={inputCls} value={home.reviews_title ?? ""} onChange={(e) => setHome({ ...home, reviews_title: e.target.value })} placeholder="Words from our patrons" /></Field>
+          <Field label="Gallery preview eyebrow"><input className={inputCls} value={home.gallery_eyebrow ?? ""} onChange={(e) => setHome({ ...home, gallery_eyebrow: e.target.value })} /></Field>
+          <Field label="Gallery preview title"><input className={inputCls} value={home.gallery_title ?? ""} onChange={(e) => setHome({ ...home, gallery_title: e.target.value })} /></Field>
+          <Field label="Visit-us eyebrow"><input className={inputCls} value={home.visit_eyebrow ?? ""} onChange={(e) => setHome({ ...home, visit_eyebrow: e.target.value })} placeholder="Visit Us" /></Field>
+          <Field label="Visit-us title"><input className={inputCls} value={home.visit_title ?? ""} onChange={(e) => setHome({ ...home, visit_title: e.target.value })} placeholder="Step into the showroom" /></Field>
+        </div>
+        <Field label="Visit-us description"><textarea rows={2} className={inputCls} value={home.visit_desc ?? ""} onChange={(e) => setHome({ ...home, visit_desc: e.target.value })} /></Field>
+      </section>
+
+      <section className="rounded-2xl border border-maroon/10 bg-ivory p-6 space-y-4 md:col-span-2">
+        <h3 className="font-display text-xl text-maroon">About Page</h3>
+        <p className="text-xs text-muted-foreground">Story, mission, vision, heritage and founder blocks. Timeline milestones live under Pages & Content → About – Timeline.</p>
+        <div className="grid md:grid-cols-2 gap-4">
+          <Field label="Eyebrow"><input className={inputCls} value={about.eyebrow ?? ""} onChange={(e) => setAbout({ ...about, eyebrow: e.target.value })} placeholder="Our Story" /></Field>
+          <Field label="Title"><input className={inputCls} value={about.title ?? ""} onChange={(e) => setAbout({ ...about, title: e.target.value })} /></Field>
+          <Field label="Hero image">
+            <div className="flex gap-3 items-center">
+              {about.image_url && <img src={about.image_url} className="size-20 rounded-lg object-cover bg-mist" alt="" />}
+              <button onClick={uploadAboutImg} className="text-xs text-maroon flex items-center gap-1"><Upload className="size-3.5" /> Upload</button>
+            </div>
+          </Field>
+        </div>
+        <Field label="Story (one paragraph per line)"><textarea rows={6} className={inputCls} value={about.story ?? ""} onChange={(e) => setAbout({ ...about, story: e.target.value })} /></Field>
+        <div className="grid md:grid-cols-3 gap-4">
+          <Field label="Mission — title"><input className={inputCls} value={about.mission_title ?? ""} onChange={(e) => setAbout({ ...about, mission_title: e.target.value })} placeholder="Our Mission" /></Field>
+          <Field label="Vision — title"><input className={inputCls} value={about.vision_title ?? ""} onChange={(e) => setAbout({ ...about, vision_title: e.target.value })} placeholder="Our Vision" /></Field>
+          <Field label="Heritage — title"><input className={inputCls} value={about.heritage_title ?? ""} onChange={(e) => setAbout({ ...about, heritage_title: e.target.value })} placeholder="Our Heritage" /></Field>
+          <Field label="Mission — text"><textarea rows={3} className={inputCls} value={about.mission_text ?? ""} onChange={(e) => setAbout({ ...about, mission_text: e.target.value })} /></Field>
+          <Field label="Vision — text"><textarea rows={3} className={inputCls} value={about.vision_text ?? ""} onChange={(e) => setAbout({ ...about, vision_text: e.target.value })} /></Field>
+          <Field label="Heritage — text"><textarea rows={3} className={inputCls} value={about.heritage_text ?? ""} onChange={(e) => setAbout({ ...about, heritage_text: e.target.value })} /></Field>
+        </div>
+        <div className="pt-3 border-t border-maroon/10">
+          <h4 className="font-display text-base text-maroon mb-2">Founder</h4>
+          <div className="grid md:grid-cols-3 gap-4">
+            <Field label="Founder name"><input className={inputCls} value={about.founder_name ?? ""} onChange={(e) => setAbout({ ...about, founder_name: e.target.value })} /></Field>
+            <Field label="Founder role"><input className={inputCls} value={about.founder_role ?? ""} onChange={(e) => setAbout({ ...about, founder_role: e.target.value })} placeholder="Founder, Shanti Shawls" /></Field>
+            <Field label="Founder photo">
+              <div className="flex gap-3 items-center">
+                {about.founder_image_url && <img src={about.founder_image_url} className="size-16 rounded-full object-cover bg-mist" alt="" />}
+                <button onClick={uploadFounderImg} className="text-xs text-maroon flex items-center gap-1"><Upload className="size-3.5" /> Upload</button>
+              </div>
+            </Field>
+          </div>
+          <Field label="Founder bio"><textarea rows={3} className={inputCls} value={about.founder_bio ?? ""} onChange={(e) => setAbout({ ...about, founder_bio: e.target.value })} /></Field>
+        </div>
+      </section>
+
+      <section className="rounded-2xl border border-maroon/10 bg-ivory p-6 space-y-4 md:col-span-2">
         <h3 className="font-display text-xl text-maroon">Brand Identity</h3>
         <div className="grid md:grid-cols-2 gap-4">
           <Field label="Brand Name"><input className={inputCls} value={brand.name ?? ""} onChange={(e) => setBrand({ ...brand, name: e.target.value })} placeholder="Shanti Shawls Emporium" /></Field>
           <Field label="Established Year"><input className={inputCls} value={brand.established ?? ""} onChange={(e) => setBrand({ ...brand, established: e.target.value })} /></Field>
           <Field label="Tagline"><input className={inputCls} value={brand.tagline ?? ""} onChange={(e) => setBrand({ ...brand, tagline: e.target.value })} /></Field>
-          <Field label="Copyright Text (overrides default)"><input className={inputCls} value={brand.copyright ?? ""} onChange={(e) => setBrand({ ...brand, copyright: e.target.value })} placeholder="© 2026 Shanti Shawls Emporium. All rights reserved." /></Field>
+          <Field label="Copyright Text (overrides default)"><input className={inputCls} value={brand.copyright ?? ""} onChange={(e) => setBrand({ ...brand, copyright: e.target.value })} /></Field>
         </div>
         <div className="grid md:grid-cols-2 gap-4 pt-2">
           <Field label="Logo Image (leave blank to keep text wordmark)">
@@ -562,7 +653,9 @@ function SettingsTab({ data, onChange }: any) {
         <Field label="Designer Phone"><input className={inputCls} value={designer.phone ?? ""} onChange={(e) => setDesigner({ ...designer, phone: e.target.value })} /></Field>
       </section>
 
-      <div className="md:col-span-2"><PrimaryBtn onClick={saveAll} disabled={busy}><Save className="size-3.5" /> Save all settings</PrimaryBtn></div>
+      <div className="md:col-span-2 sticky bottom-4 bg-cream/80 backdrop-blur rounded-full p-2 border border-maroon/10">
+        <PrimaryBtn onClick={saveAll} disabled={busy}><Save className="size-3.5" /> Save all settings</PrimaryBtn>
+      </div>
     </div>
   );
 }
