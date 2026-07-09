@@ -148,11 +148,6 @@ export function SiteFooter({
             )}
           </span>
         </div>
-        <div className="mt-4 text-center">
-          <Link to="/auth" className="text-cream/70 text-[10px] uppercase tracking-[0.3em] hover:text-gold">
-            Admin
-          </Link>
-        </div>
 
       </div>
     </footer>
