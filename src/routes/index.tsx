@@ -111,21 +111,23 @@ function HomePage() {
               )}
             </div>
           </div>
-          <div className="relative grain-overlay rounded-3xl overflow-hidden bg-mist">
+          <div className="relative grain-overlay rounded-3xl overflow-hidden bg-maroon-deep">
             <img
               src={hero.image_url || heroImg}
-              alt={hero.title ?? "Hero"}
+              alt={hero.title ?? "Shanti Shawls Emporium storefront"}
               width={1024}
               height={1280}
               fetchPriority="high"
-              className="w-full aspect-[4/5] object-cover"
+              className="w-full aspect-[4/5] object-contain"
             />
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/55 via-black/20 to-transparent" />
             {hero.badge && (
               <div className="absolute bottom-6 left-6 bg-cream/95 backdrop-blur px-5 py-3 rounded-full text-[10px] uppercase tracking-[0.3em] text-maroon font-semibold">
                 {hero.badge}
               </div>
             )}
           </div>
+
         </div>
       </section>
 
