@@ -7,10 +7,10 @@ async function assertAdmin(supabase: any, userId: string) {
     .from("user_roles")
     .select("role")
     .eq("user_id", userId)
-    .eq("role", "admin")
-    .maybeSingle();
-  if (error || !data) throw new Error("Forbidden: admin only");
+    .in("role", ["admin", "super_admin"]);
+  if (error || !data || data.length === 0) throw new Error("Forbidden: admin only");
 }
+
 
 export const checkIsAdmin = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
