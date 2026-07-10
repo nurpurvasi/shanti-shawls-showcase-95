@@ -57,62 +57,113 @@ function AdminPage() {
   const brand = (data.settings?.brand as any) ?? {};
 
 
-  return (
-    <div className="min-h-screen bg-cream">
-      <header className="border-b border-maroon/10 bg-ivory/80 backdrop-blur sticky top-0 z-40">
-        <div className="px-6 md:px-10 py-4 flex items-center justify-between max-w-7xl mx-auto">
-          <div className="flex items-center gap-3">
-            {brand.logo_url && (
-              <img src={brand.logo_url} alt={brand.name ?? "Shanti Shawls Emporium"} width={48} height={48} className="h-12 w-12 rounded-full object-contain" />
-            )}
-            <div>
-              <p className="eyebrow">{isSuperAdmin ? "Super Admin" : "Admin"}</p>
-              <h1 className="font-display text-xl text-maroon">{brand.name ?? "Shanti Shawls Emporium"}</h1>
-            </div>
+  const nav = [
+    { v: "overview", l: "Overview", icon: LayoutDashboard, show: true },
+    { v: "products", l: "Products", icon: Package, show: true },
+    { v: "categories", l: "Collections", icon: FolderTree, show: true },
+    { v: "gallery", l: "Gallery", icon: Images, show: true },
+    { v: "reviews", l: "Reviews", icon: MessageSquare, show: true },
+    { v: "sections", l: "Pages & Content", icon: FileText, show: true },
+    { v: "settings", l: "Site Settings", icon: SettingsIcon, show: true },
+    { v: "seo", l: "SEO", icon: Search, show: isSuperAdmin },
+    { v: "users", l: "Users", icon: UsersIcon, show: isSuperAdmin },
+  ].filter(x => x.show);
 
-          </div>
-          <div className="flex items-center gap-2">
-            <Link to="/" className="text-xs uppercase tracking-[0.18em] text-maroon hover:underline">View site</Link>
-            <button onClick={signOut} className="ml-3 inline-flex items-center gap-2 rounded-full border border-maroon/20 px-4 py-2 text-xs uppercase tracking-[0.18em] text-maroon hover:bg-maroon/5">
-              <LogOut className="size-3.5" /> Sign out
-            </button>
+  const [active, setActive] = useState("overview");
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  return (
+    <div className="min-h-screen bg-cream flex">
+      {/* Sidebar */}
+      <aside className={`${mobileOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0 fixed md:sticky top-0 left-0 z-50 h-screen w-64 shrink-0 border-r border-maroon/10 bg-ivory transition-transform`}>
+        <div className="flex items-center gap-3 px-5 py-5 border-b border-maroon/10">
+          {brand.logo_url && (
+            <img src={brand.logo_url} alt={brand.name ?? "Shanti Shawls Emporium"} width={40} height={40} className="h-10 w-10 rounded-full object-contain shrink-0" />
+          )}
+          <div className="min-w-0">
+            <p className="eyebrow text-[10px]">{isSuperAdmin ? "Super Admin" : "Admin"}</p>
+            <h1 className="font-display text-sm text-maroon truncate">{brand.name ?? "Shanti Shawls Emporium"}</h1>
           </div>
         </div>
-      </header>
+        <nav className="p-3 flex flex-col gap-1">
+          {nav.map(({ v, l, icon: Icon }) => (
+            <button
+              key={v}
+              onClick={() => { setActive(v); setMobileOpen(false); }}
+              className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-left transition ${active === v ? "bg-maroon text-cream" : "text-maroon hover:bg-maroon/5"}`}
+            >
+              <Icon className="size-4 shrink-0" />
+              <span className="truncate">{l}</span>
+            </button>
+          ))}
+        </nav>
+        <div className="absolute bottom-0 left-0 right-0 p-3 border-t border-maroon/10 space-y-1">
+          <Link to="/" className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-maroon hover:bg-maroon/5">
+            <LayoutDashboard className="size-4" /> View site
+          </Link>
+          <button onClick={signOut} className="w-full flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-maroon hover:bg-maroon/5">
+            <LogOut className="size-4" /> Sign out
+          </button>
+        </div>
+      </aside>
 
-      <main className="px-6 md:px-10 py-10 max-w-7xl mx-auto">
-        <Tabs defaultValue="products" className="w-full">
-          <TabsList className="flex flex-wrap gap-1 bg-ivory border border-maroon/10 rounded-full p-1 h-auto w-full md:w-auto">
-            {([
-              ["products","Products", true],
-              ["categories","Collections", true],
-              ["gallery","Gallery", true],
-              ["reviews","Reviews", true],
-              ["sections","Pages & Content", true],
-              ["settings","Site Settings", true],
-              ["seo","SEO", isSuperAdmin],
-              ["users","Users", isSuperAdmin],
-            ] as const).filter(([,,show]) => show).map(([v,l]) => (
-              <TabsTrigger key={v} value={v} className="rounded-full px-4 py-2 text-xs uppercase tracking-[0.18em] data-[state=active]:bg-maroon data-[state=active]:text-cream">
-                {l}
-              </TabsTrigger>
-            ))}
-          </TabsList>
+      {mobileOpen && <div className="fixed inset-0 bg-black/40 z-40 md:hidden" onClick={() => setMobileOpen(false)} />}
 
-          <TabsContent value="products" className="mt-8"><ProductsTab data={data} onChange={refresh} /></TabsContent>
-          <TabsContent value="categories" className="mt-8"><CategoriesTab data={data} onChange={refresh} /></TabsContent>
-          <TabsContent value="gallery" className="mt-8"><GalleryTab data={data} onChange={refresh} /></TabsContent>
-          <TabsContent value="reviews" className="mt-8"><ReviewsTab data={data} onChange={refresh} /></TabsContent>
-          <TabsContent value="sections" className="mt-8"><SectionsTab data={data} onChange={refresh} /></TabsContent>
-          <TabsContent value="settings" className="mt-8"><SettingsTab data={data} onChange={refresh} /></TabsContent>
-          {isSuperAdmin && <TabsContent value="seo" className="mt-8"><SeoTab data={data} onChange={refresh} /></TabsContent>}
-          {isSuperAdmin && <TabsContent value="users" className="mt-8"><UsersTab /></TabsContent>}
-        </Tabs>
+      <div className="flex-1 min-w-0">
+        <header className="md:hidden sticky top-0 z-30 border-b border-maroon/10 bg-ivory/90 backdrop-blur px-4 py-3 flex items-center justify-between">
+          <button onClick={() => setMobileOpen(true)} className="rounded-md border border-maroon/20 px-3 py-1.5 text-xs uppercase tracking-[0.18em] text-maroon">Menu</button>
+          <span className="font-display text-sm text-maroon truncate">{nav.find(n => n.v === active)?.l}</span>
+          <span className="w-12" />
+        </header>
 
-      </main>
+        <main className="px-4 md:px-8 py-6 md:py-10 max-w-7xl">
+          {active === "overview" && <OverviewTab data={data} isSuperAdmin={isSuperAdmin} />}
+          {active === "products" && <ProductsTab data={data} onChange={refresh} />}
+          {active === "categories" && <CategoriesTab data={data} onChange={refresh} />}
+          {active === "gallery" && <GalleryTab data={data} onChange={refresh} />}
+          {active === "reviews" && <ReviewsTab data={data} onChange={refresh} />}
+          {active === "sections" && <SectionsTab data={data} onChange={refresh} />}
+          {active === "settings" && <SettingsTab data={data} onChange={refresh} />}
+          {active === "seo" && isSuperAdmin && <SeoTab data={data} onChange={refresh} />}
+          {active === "users" && isSuperAdmin && <UsersTab />}
+        </main>
+      </div>
     </div>
   );
 }
+
+function OverviewTab({ data, isSuperAdmin }: { data: any; isSuperAdmin: boolean }) {
+  const products = data.products ?? [];
+  const stats = [
+    { label: "Products", value: products.length, sub: `${products.filter((p: any) => p.active).length} active` },
+    { label: "Collections", value: (data.categories ?? []).length },
+    { label: "Gallery images", value: (data.gallery ?? []).length },
+    { label: "Reviews", value: (data.reviews ?? []).length },
+    { label: "Featured", value: products.filter((p: any) => p.featured).length },
+    { label: "Best sellers", value: products.filter((p: any) => p.best_seller).length },
+    { label: "New arrivals", value: products.filter((p: any) => p.new_arrival).length },
+    { label: "Out of stock", value: products.filter((p: any) => !p.in_stock).length },
+  ];
+  return (
+    <div className="space-y-8">
+      <div>
+        <p className="eyebrow">{isSuperAdmin ? "Super Admin Dashboard" : "Admin Dashboard"}</p>
+        <h2 className="font-display text-3xl md:text-4xl text-maroon mt-2">Welcome back</h2>
+        <p className="text-muted-foreground mt-2 max-w-xl">Manage every product, image and page from one place. All content stays editable — nothing is hardcoded.</p>
+      </div>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {stats.map(s => (
+          <div key={s.label} className="rounded-2xl border border-maroon/10 bg-ivory p-5">
+            <p className="text-xs uppercase tracking-[0.18em] text-maroon/70">{s.label}</p>
+            <p className="mt-2 font-display text-3xl text-maroon">{s.value}</p>
+            {s.sub && <p className="text-xs text-muted-foreground mt-1">{s.sub}</p>}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 
 // ---------- helpers ----------
 
