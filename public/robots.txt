@@ -4,4 +4,4 @@ Disallow: /admin
 Disallow: /auth
 Disallow: /_authenticated
 
-Sitemap: /sitemap.xml
+Sitemap: https://shanti-threads-showcase.lovable.app/sitemap.xml
