@@ -755,3 +755,117 @@ function SettingsTab({ data, onChange }: any) {
     </div>
   );
 }
+
+// ---------- SEO (super admin) ----------
+
+function SeoTab({ data, onChange }: any) {
+  const [seo, setSeo] = useState<any>(data.settings.seo ?? {});
+  const [busy, setBusy] = useState(false);
+  async function uploadOg() { const url = await pickAndUpload("seo"); if (url) setSeo({ ...seo, og_image_url: url }); }
+  async function save() {
+    setBusy(true);
+    try { await upsertSetting({ data: { key: "seo", value: seo } }); toast.success("SEO saved"); onChange(); }
+    catch (e: any) { toast.error(e?.message ?? "Failed"); } finally { setBusy(false); }
+  }
+  return (
+    <div className="max-w-3xl space-y-6">
+      <div>
+        <h2 className="font-display text-2xl text-maroon">SEO & Social Preview</h2>
+        <p className="text-sm text-muted-foreground mt-1">Controls the browser tab title, meta description, Google search snippet, and how the site looks when shared on WhatsApp / Facebook / Instagram.</p>
+      </div>
+      <section className="rounded-2xl border border-maroon/10 bg-ivory p-6 space-y-4">
+        <Field label="Default page title (≤ 60 chars recommended)">
+          <input className={inputCls} maxLength={80} value={seo.default_title ?? ""} onChange={(e) => setSeo({ ...seo, default_title: e.target.value })} placeholder="Shanti Shawls Emporium — Premium Woollen Shawls…" />
+        </Field>
+        <Field label="Default meta description (≤ 160 chars)">
+          <textarea rows={3} maxLength={200} className={inputCls} value={seo.default_description ?? ""} onChange={(e) => setSeo({ ...seo, default_description: e.target.value })} />
+        </Field>
+        <Field label="Keywords (comma-separated)">
+          <input className={inputCls} value={seo.keywords ?? ""} onChange={(e) => setSeo({ ...seo, keywords: e.target.value })} placeholder="Kangra shawls, Himachali caps, woollen suits…" />
+        </Field>
+        <Field label="Social share image (1200×630 recommended)">
+          <div className="flex gap-3 items-center">
+            {seo.og_image_url && <img src={seo.og_image_url} className="h-16 w-28 object-cover rounded bg-mist" alt="" />}
+            <button onClick={uploadOg} className="text-xs text-maroon flex items-center gap-1"><Upload className="size-3.5" /> Upload</button>
+            {seo.og_image_url && <button onClick={() => setSeo({ ...seo, og_image_url: "" })} className="text-xs text-muted-foreground hover:text-maroon">Clear</button>}
+          </div>
+        </Field>
+        <div className="grid md:grid-cols-2 gap-4">
+          <Field label="Theme color (browser bar)"><input className={inputCls} value={seo.theme_color ?? ""} onChange={(e) => setSeo({ ...seo, theme_color: e.target.value })} placeholder="#7b1a1a" /></Field>
+          <Field label="Google Search Console verification"><input className={inputCls} value={seo.gsc_verification ?? ""} onChange={(e) => setSeo({ ...seo, gsc_verification: e.target.value })} placeholder="abcd1234…" /></Field>
+        </div>
+      </section>
+      <PrimaryBtn onClick={save} disabled={busy}><Save className="size-3.5" /> Save SEO</PrimaryBtn>
+    </div>
+  );
+}
+
+// ---------- USERS (super admin) ----------
+
+function UsersTab() {
+  const qc = useQueryClient();
+  const { data: users = [], isLoading, refetch } = useQuery({
+    queryKey: ["admin-users"],
+    queryFn: () => listUsers(),
+  });
+  async function toggle(user_id: string, role: "admin" | "super_admin", grant: boolean) {
+    try {
+      await setUserRole({ data: { user_id, role, grant } });
+      toast.success(grant ? "Role granted" : "Role revoked");
+      refetch();
+      qc.invalidateQueries({ queryKey: ["admin-whoami"] });
+    } catch (e: any) { toast.error(e?.message ?? "Failed"); }
+  }
+  async function remove(user_id: string, email?: string | null) {
+    if (!confirm(`Delete user ${email ?? user_id}? This cannot be undone.`)) return;
+    try { await deleteUser({ data: { user_id } }); toast.success("Deleted"); refetch(); }
+    catch (e: any) { toast.error(e?.message ?? "Failed"); }
+  }
+  return (
+    <div className="max-w-4xl">
+      <div className="mb-6">
+        <h2 className="font-display text-2xl text-maroon">Users & Roles</h2>
+        <p className="text-sm text-muted-foreground mt-1">Super Admin can manage every account, dashboard, and setting. Admin manages content, products, gallery, contact & branding — but cannot manage users or SEO.</p>
+      </div>
+      {isLoading ? (
+        <p className="text-sm text-muted-foreground">Loading users…</p>
+      ) : (
+        <div className="rounded-2xl border border-maroon/10 bg-ivory divide-y divide-maroon/5">
+          {users.map((u: any) => {
+            const isAdmin = u.roles.includes("admin");
+            const isSuper = u.roles.includes("super_admin");
+            return (
+              <div key={u.id} className="p-4 grid grid-cols-[minmax(0,1fr)_auto] gap-4 items-center">
+                <div className="min-w-0">
+                  <p className="text-sm font-medium truncate">{u.email ?? u.id}</p>
+                  <p className="text-[11px] text-muted-foreground">
+                    Joined {u.created_at ? new Date(u.created_at).toLocaleDateString() : "—"}
+                    {u.last_sign_in_at && ` · last seen ${new Date(u.last_sign_in_at).toLocaleDateString()}`}
+                  </p>
+                  <div className="mt-1 flex gap-1 flex-wrap">
+                    {isSuper && <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-maroon text-cream">Super Admin</span>}
+                    {isAdmin && <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-gold/20 text-maroon">Admin</span>}
+                    {!isAdmin && !isSuper && <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-mist text-muted-foreground">User</span>}
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-2 shrink-0">
+                  <button onClick={() => toggle(u.id, "admin", !isAdmin)} className="text-[11px] uppercase tracking-wider px-3 py-1.5 rounded-full border border-maroon/20 text-maroon hover:bg-maroon/5">
+                    {isAdmin ? "Revoke Admin" : "Make Admin"}
+                  </button>
+                  <button onClick={() => toggle(u.id, "super_admin", !isSuper)} className="text-[11px] uppercase tracking-wider px-3 py-1.5 rounded-full border border-maroon/20 text-maroon hover:bg-maroon/5">
+                    {isSuper ? "Revoke Super" : "Make Super"}
+                  </button>
+                  <button onClick={() => remove(u.id, u.email)} className="text-[11px] uppercase tracking-wider px-3 py-1.5 rounded-full border border-maroon/20 text-maroon hover:bg-maroon/5" title="Delete user">
+                    <Trash2 className="size-3.5" />
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+          {users.length === 0 && <p className="p-8 text-center text-sm text-muted-foreground">No users found.</p>}
+        </div>
+      )}
+    </div>
+  );
+}
+
