@@ -12,7 +12,7 @@ type Contact = {
   maps_link?: string;
 };
 
-type Social = { facebook?: string; instagram?: string };
+type Social = { facebook?: string; instagram?: string; youtube?: string };
 type Designer = { name?: string; email?: string; phone?: string };
 type Brand = { name?: string; established?: string; tagline?: string; copyright?: string };
 
