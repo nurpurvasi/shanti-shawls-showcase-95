@@ -11,12 +11,17 @@ export type ProductCardData = {
   discount_price: number | null;
   is_featured: boolean;
   is_new_arrival: boolean;
+  is_best_seller?: boolean;
+  is_available: boolean;
   images: string[];
+  category_id?: string | null;
 };
 
-export function ProductCard({ p }: { p: ProductCardData }) {
+export function ProductCard({ p, categoryName }: { p: ProductCardData; categoryName?: string | null }) {
   const img = productImage(p.slug, p.images);
   const hasDiscount = p.discount_price != null && p.discount_price < p.price;
+  const inStock = p.is_available !== false;
+  const label = categoryName ?? p.material ?? null;
   return (
     <article className="group">
       <div className="relative mb-4 overflow-hidden rounded-2xl bg-mist grain-overlay">
@@ -33,11 +38,19 @@ export function ProductCard({ p }: { p: ProductCardData }) {
           {p.is_new_arrival && (
             <span className="bg-gold text-ink text-[9px] font-semibold px-2.5 py-1 rounded-full uppercase tracking-[0.18em]">New Arrival</span>
           )}
+          {p.is_best_seller && (
+            <span className="bg-ink text-cream text-[9px] font-semibold px-2.5 py-1 rounded-full uppercase tracking-[0.18em]">Bestseller</span>
+          )}
+        </div>
+        <div className="absolute bottom-3 left-3 z-10">
+          <span className={`text-[9px] font-semibold px-2.5 py-1 rounded-full uppercase tracking-[0.18em] ${inStock ? "bg-emerald-700/90 text-cream" : "bg-black/70 text-cream"}`}>
+            {inStock ? "In Stock" : "Out of Stock"}
+          </span>
         </div>
       </div>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          {p.material && <p className="text-[10px] uppercase tracking-[0.25em] text-gold font-medium mb-1">{p.material}</p>}
+          {label && <p className="text-[10px] uppercase tracking-[0.25em] text-gold font-medium mb-1">{label}</p>}
           <h3 className="font-display text-lg text-maroon leading-tight truncate">{p.name}</h3>
           {p.short_description && (
             <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{p.short_description}</p>
