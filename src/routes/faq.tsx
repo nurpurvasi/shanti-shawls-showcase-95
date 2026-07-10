@@ -7,23 +7,26 @@ import { WhatsAppFab } from "@/components/WhatsAppFab";
 import { SectionHeading } from "@/components/SectionHeading";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
+import { SITE_URL, breadcrumbJsonLd } from "@/lib/seo";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { PageSkeleton } from "@/components/PageSkeleton";
+
 const sfq = { queryKey: ["storefront"], queryFn: () => fetchStorefront() } as const;
 
 export const Route = createFileRoute("/faq")({
   head: () => ({
     meta: [
-      { title: "FAQ — Shanti Shawls Emporium" },
-      { name: "description", content: "Questions about authenticity, materials, care and visiting our Nurpur showroom — answered." },
+      { title: "FAQ — Authenticity, Materials, Care & Visits | Shanti Shawls" },
+      { name: "description", content: "Answers on wool authenticity, materials, care instructions and visiting our Nurpur showroom in Kangra, Himachal Pradesh." },
       { property: "og:title", content: "FAQ — Shanti Shawls Emporium" },
       { property: "og:description", content: "Questions about authenticity, materials, care and visiting our showroom." },
-      { property: "og:url", content: "/faq" },
-      { property: "og:image", content: "/og-image.jpg" },
-      { name: "twitter:image", content: "/og-image.jpg" },
+      { property: "og:url", content: SITE_URL + "/faq" },
     ],
-    links: [{ rel: "canonical", href: "/faq" }],
+    links: [{ rel: "canonical", href: SITE_URL + "/faq" }],
   }),
   loader: ({ context }) => context.queryClient.ensureQueryData(sfq),
   component: FaqPage,
+  pendingComponent: PageSkeleton,
 });
 
 function FaqPage() {
