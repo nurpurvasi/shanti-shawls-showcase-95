@@ -35,6 +35,11 @@ function AdminPage() {
     queryKey: ["admin-data"],
     queryFn: () => fetchAdminData(),
   });
+  const { data: whoami } = useQuery({
+    queryKey: ["admin-whoami"],
+    queryFn: () => checkIsAdmin(),
+  });
+  const isSuperAdmin = !!whoami?.isSuperAdmin;
 
   async function signOut() {
     await supabase.auth.signOut();
@@ -50,6 +55,7 @@ function AdminPage() {
   if (isLoading || !data) return <div className="min-h-screen grid place-items-center text-muted-foreground">Loading…</div>;
 
   const brand = (data.settings?.brand as any) ?? {};
+
 
   return (
     <div className="min-h-screen bg-cream">
