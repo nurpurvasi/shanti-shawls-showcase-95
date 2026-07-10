@@ -40,6 +40,7 @@ function ReviewsPage() {
     <div className="min-h-screen bg-cream">
       <SiteHeader brand={(data.settings.brand as any) ?? {}} />
       <main id="main" tabIndex={-1} className="focus:outline-none">
+      <Breadcrumbs items={[{ name: "Reviews", path: "/reviews" }]} />
       <h1 className="sr-only">Customer Reviews &amp; Testimonials</h1>
       <section className="px-6 md:px-10 py-20">
         <div className="mx-auto max-w-5xl">
