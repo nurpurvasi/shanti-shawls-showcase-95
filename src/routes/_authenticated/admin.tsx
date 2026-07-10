@@ -144,25 +144,77 @@ function toBase64(file: File): Promise<string> {
 
 function ProductsTab({ data, onChange }: any) {
   const [editing, setEditing] = useState<any | null>(null);
+  const [q, setQ] = useState("");
+  const [catFilter, setCatFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+
+  const filtered = data.products.filter((p: any) => {
+    const t = q.trim().toLowerCase();
+    if (t && !(`${p.name} ${p.sku ?? ""} ${p.material ?? ""}`.toLowerCase().includes(t))) return false;
+    if (catFilter !== "all" && p.category_id !== catFilter) return false;
+    if (statusFilter === "active" && !p.is_available) return false;
+    if (statusFilter === "hidden" && p.is_available) return false;
+    if (statusFilter === "featured" && !p.is_featured) return false;
+    if (statusFilter === "new" && !p.is_new_arrival) return false;
+    if (statusFilter === "best" && !p.is_best_seller) return false;
+    return true;
+  });
+
+  async function duplicate(p: any) {
+    const { id, created_at, updated_at, slug, name, sort_order, ...rest } = p;
+    const dupName = `${name} (Copy)`;
+    const dupSlug = `${slug}-copy-${Date.now().toString(36)}`;
+    try {
+      await upsertProduct({ data: { ...rest, name: dupName, slug: dupSlug, sort_order: (sort_order ?? 0) + 1 } as any });
+      toast.success("Duplicated");
+      onChange();
+    } catch (e: any) { toast.error(e?.message ?? "Duplicate failed"); }
+  }
+
   return (
-    <div className="grid lg:grid-cols-[1fr_400px] gap-8">
+    <div className="grid lg:grid-cols-[1fr_420px] gap-8">
       <div className="space-y-3">
-        <div className="flex justify-between items-center">
-          <h2 className="font-display text-2xl text-maroon">Products ({data.products.length})</h2>
+        <div className="flex justify-between items-center flex-wrap gap-2">
+          <h2 className="font-display text-2xl text-maroon">Products ({filtered.length}/{data.products.length})</h2>
           <PrimaryBtn onClick={() => setEditing({ name: "", slug: "", price: 0, is_available: true, sort_order: 0, images: [] })}>
             <Plus className="size-3.5" /> New
           </PrimaryBtn>
         </div>
+        <div className="flex flex-wrap gap-2">
+          <input className={inputCls + " flex-1 min-w-[180px]"} placeholder="Search name, SKU, material…" value={q} onChange={(e) => setQ(e.target.value)} />
+          <select className={inputCls + " w-auto"} value={catFilter} onChange={(e) => setCatFilter(e.target.value)}>
+            <option value="all">All categories</option>
+            {data.categories.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
+          </select>
+          <select className={inputCls + " w-auto"} value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+            <option value="all">All status</option>
+            <option value="active">Active</option>
+            <option value="hidden">Out of stock</option>
+            <option value="featured">Featured</option>
+            <option value="new">New Arrival</option>
+            <option value="best">Best Seller</option>
+          </select>
+        </div>
         <div className="rounded-2xl border border-maroon/10 bg-ivory divide-y divide-maroon/5">
-          {data.products.map((p: any) => (
-            <button key={p.id} onClick={() => setEditing(p)} className="w-full text-left p-4 flex items-center gap-4 hover:bg-maroon/5">
-              <img src={p.images?.[0] ?? "/placeholder.svg"} alt="" className="size-14 rounded-lg object-cover bg-mist" />
-              <div className="flex-1 min-w-0">
-                <p className="font-medium text-sm truncate">{p.name}</p>
-                <p className="text-xs text-muted-foreground">{formatINR(p.discount_price ?? p.price)} {p.is_featured && "· ★"} {p.is_new_arrival && "· NEW"} {!p.is_available && "· OOS"}</p>
-              </div>
-            </button>
+          {filtered.map((p: any) => (
+            <div key={p.id} className="p-4 flex items-center gap-4 hover:bg-maroon/5">
+              <button onClick={() => setEditing(p)} className="flex items-center gap-4 flex-1 min-w-0 text-left">
+                <img src={p.images?.[0] ?? "/placeholder.svg"} alt="" className="size-14 rounded-lg object-cover bg-mist" />
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-sm truncate">{p.name} {p.sku && <span className="text-[10px] text-muted-foreground">· {p.sku}</span>}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {formatINR(p.discount_price ?? p.price)}
+                    {p.is_featured && " · ★ Featured"}
+                    {p.is_new_arrival && " · NEW"}
+                    {p.is_best_seller && " · BEST"}
+                    {!p.is_available && " · Hidden"}
+                  </p>
+                </div>
+              </button>
+              <button onClick={() => duplicate(p)} title="Duplicate" className="text-xs px-2 py-1 rounded border border-maroon/20 text-maroon hover:bg-maroon/5">Copy</button>
+            </div>
           ))}
+          {filtered.length === 0 && <p className="p-8 text-center text-sm text-muted-foreground">No products match.</p>}
         </div>
       </div>
       <div>{editing && <ProductForm key={editing.id ?? "new"} initial={editing} categories={data.categories} onSaved={() => { setEditing(null); onChange(); }} onCancel={() => setEditing(null)} />}</div>
@@ -179,7 +231,15 @@ function ProductForm({ initial, categories, onSaved, onCancel }: any) {
     setBusy(true);
     try {
       const slug = (f.slug || f.name).toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-      await upsertProduct({ data: { ...f, slug, price: Number(f.price), discount_price: f.discount_price ? Number(f.discount_price) : null, sort_order: Number(f.sort_order || 0) } });
+      await upsertProduct({ data: {
+        ...f,
+        slug,
+        price: Number(f.price),
+        discount_price: f.discount_price ? Number(f.discount_price) : null,
+        sort_order: Number(f.sort_order || 0),
+        sku: f.sku?.trim() || null,
+        short_description: f.short_description?.trim() || null,
+      } });
       toast.success("Saved");
       onSaved();
     } catch (e: any) { toast.error(e?.message ?? "Save failed"); }
@@ -195,49 +255,63 @@ function ProductForm({ initial, categories, onSaved, onCancel }: any) {
     const url = await pickAndUpload("products");
     if (url) set("images", [...(f.images ?? []), url]);
   }
+  function moveImage(i: number, dir: -1 | 1) {
+    const imgs = [...(f.images ?? [])];
+    const j = i + dir;
+    if (j < 0 || j >= imgs.length) return;
+    [imgs[i], imgs[j]] = [imgs[j], imgs[i]];
+    set("images", imgs);
+  }
 
   return (
-    <div className="rounded-2xl border border-maroon/10 bg-ivory p-6 space-y-4 sticky top-24">
+    <div className="rounded-2xl border border-maroon/10 bg-ivory p-6 space-y-4 sticky top-24 max-h-[calc(100vh-8rem)] overflow-y-auto">
       <div className="flex justify-between items-center">
         <h3 className="font-display text-lg text-maroon">{f.id ? "Edit" : "New"} product</h3>
         <button onClick={onCancel} className="text-xs text-muted-foreground hover:text-maroon">Close</button>
       </div>
       <Field label="Name"><input className={inputCls} value={f.name ?? ""} onChange={(e) => set("name", e.target.value)} /></Field>
-      <Field label="Slug (auto from name)"><input className={inputCls} value={f.slug ?? ""} onChange={(e) => set("slug", e.target.value)} placeholder="optional" /></Field>
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Slug (auto)"><input className={inputCls} value={f.slug ?? ""} onChange={(e) => set("slug", e.target.value)} placeholder="optional" /></Field>
+        <Field label="SKU (optional)"><input className={inputCls} value={f.sku ?? ""} onChange={(e) => set("sku", e.target.value)} placeholder="SHW-001" /></Field>
+      </div>
       <Field label="Category">
         <select className={inputCls} value={f.category_id ?? ""} onChange={(e) => set("category_id", e.target.value || null)}>
           <option value="">— None —</option>
           {categories.map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}
         </select>
       </Field>
-      <Field label="Description"><textarea rows={3} className={inputCls} value={f.description ?? ""} onChange={(e) => set("description", e.target.value)} /></Field>
+      <Field label="Short description (card blurb)"><textarea rows={2} className={inputCls} value={f.short_description ?? ""} onChange={(e) => set("short_description", e.target.value)} /></Field>
+      <Field label="Full description"><textarea rows={4} className={inputCls} value={f.description ?? ""} onChange={(e) => set("description", e.target.value)} /></Field>
       <div className="grid grid-cols-2 gap-3">
         <Field label="Price (INR)"><input type="number" className={inputCls} value={f.price ?? 0} onChange={(e) => set("price", e.target.value)} /></Field>
-        <Field label="Discount price"><input type="number" className={inputCls} value={f.discount_price ?? ""} onChange={(e) => set("discount_price", e.target.value)} /></Field>
+        <Field label="Sale price"><input type="number" className={inputCls} value={f.discount_price ?? ""} onChange={(e) => set("discount_price", e.target.value)} /></Field>
       </div>
-      <div className="grid grid-cols-1 gap-3">
-        <Field label="Material"><input className={inputCls} value={f.material ?? ""} onChange={(e) => set("material", e.target.value)} /></Field>
-      </div>
-      <div className="grid grid-cols-3 gap-3 text-xs">
-        <label className="flex items-center gap-2"><input type="checkbox" checked={!!f.is_available} onChange={(e) => set("is_available", e.target.checked)} /> In stock</label>
+      <Field label="Material"><input className={inputCls} value={f.material ?? ""} onChange={(e) => set("material", e.target.value)} /></Field>
+      <div className="grid grid-cols-2 gap-3 text-xs">
+        <label className="flex items-center gap-2"><input type="checkbox" checked={!!f.is_available} onChange={(e) => set("is_available", e.target.checked)} /> In stock / active</label>
         <label className="flex items-center gap-2"><input type="checkbox" checked={!!f.is_featured} onChange={(e) => set("is_featured", e.target.checked)} /> Featured</label>
-        <label className="flex items-center gap-2"><input type="checkbox" checked={!!f.is_new_arrival} onChange={(e) => set("is_new_arrival", e.target.checked)} /> New</label>
+        <label className="flex items-center gap-2"><input type="checkbox" checked={!!f.is_new_arrival} onChange={(e) => set("is_new_arrival", e.target.checked)} /> New arrival</label>
+        <label className="flex items-center gap-2"><input type="checkbox" checked={!!f.is_best_seller} onChange={(e) => set("is_best_seller", e.target.checked)} /> Best seller</label>
       </div>
       <div>
         <div className="flex justify-between items-center mb-2">
-          <span className="text-[10px] uppercase tracking-[0.2em] text-ink/60">Images</span>
+          <span className="text-[10px] uppercase tracking-[0.2em] text-ink/60">Images (drag order with arrows)</span>
           <button onClick={addImage} className="text-xs text-maroon flex items-center gap-1"><ImagePlus className="size-3.5" /> Add</button>
         </div>
         <div className="grid grid-cols-3 gap-2">
           {(f.images ?? []).map((url: string, i: number) => (
             <div key={i} className="relative group aspect-square rounded-lg overflow-hidden bg-mist">
               <img src={url} alt="" className="w-full h-full object-cover" />
-              <button onClick={() => set("images", f.images.filter((_: any, j: number) => j !== i))} className="absolute top-1 right-1 bg-maroon text-cream rounded-full p-1 opacity-0 group-hover:opacity-100"><Trash2 className="size-3" /></button>
+              <div className="absolute inset-x-0 bottom-0 flex justify-between p-1 opacity-0 group-hover:opacity-100 bg-gradient-to-t from-black/60">
+                <button onClick={() => moveImage(i, -1)} className="text-cream text-[10px] px-1.5 rounded bg-black/40">←</button>
+                <button onClick={() => set("images", f.images.filter((_: any, j: number) => j !== i))} className="text-cream text-[10px] px-1.5 rounded bg-maroon"><Trash2 className="size-3" /></button>
+                <button onClick={() => moveImage(i, 1)} className="text-cream text-[10px] px-1.5 rounded bg-black/40">→</button>
+              </div>
             </div>
           ))}
         </div>
       </div>
-      <Field label="Sort order"><input type="number" className={inputCls} value={f.sort_order ?? 0} onChange={(e) => set("sort_order", e.target.value)} /></Field>
+      <Field label="Sort order (lower shows first)"><input type="number" className={inputCls} value={f.sort_order ?? 0} onChange={(e) => set("sort_order", e.target.value)} /></Field>
       <div className="flex gap-2 pt-2">
         <PrimaryBtn onClick={save} disabled={busy}><Save className="size-3.5" /> Save</PrimaryBtn>
         {f.id && <button onClick={remove} disabled={busy} className="rounded-full border border-maroon/20 text-maroon px-4 py-2.5 text-xs uppercase tracking-[0.18em] hover:bg-maroon/5"><Trash2 className="size-3.5 inline" /></button>}
@@ -245,6 +319,7 @@ function ProductForm({ initial, categories, onSaved, onCancel }: any) {
     </div>
   );
 }
+
 
 // ---------- CATEGORIES ----------
 
