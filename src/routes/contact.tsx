@@ -70,10 +70,14 @@ function ContactPage() {
   }
 
   const brand = (data.settings.brand as any) ?? {};
+  const social = (data.settings.social as any) ?? {};
+  const lbLd = localBusinessJsonLd(brand, contact, social);
   return (
     <div className="min-h-screen bg-cream">
       <SiteHeader brand={brand} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(lbLd) }} />
       <main id="main" tabIndex={-1} className="focus:outline-none">
+      <Breadcrumbs items={[{ name: "Contact", path: "/contact" }]} />
       <h1 className="sr-only">Contact Shanti Shawls Emporium — Nurpur, Kangra</h1>
       <section className="px-6 md:px-10 py-20">
         {brand.logo_url && (
