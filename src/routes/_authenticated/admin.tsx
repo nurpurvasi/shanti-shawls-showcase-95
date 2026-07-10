@@ -47,7 +47,7 @@ function AdminPage() {
 
   if (isLoading || !data) return <div className="min-h-screen grid place-items-center text-muted-foreground">Loading…</div>;
 
-  const brand = (data.settings.find((s: any) => s.key === "brand")?.value as any) ?? {};
+  const brand = (data.settings?.brand as any) ?? {};
 
   return (
     <div className="min-h-screen bg-cream">
