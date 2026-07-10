@@ -33,10 +33,23 @@ function FaqPage() {
   const { data } = useSuspenseQuery(sfq);
   const contact = (data.settings.contact as any) ?? {};
   const faqs = data.sections.filter((s) => s.section_key === "faq");
+  const faqLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((f) => ({
+      "@type": "Question",
+      name: f.title,
+      acceptedAnswer: { "@type": "Answer", text: f.content ?? "" },
+    })),
+  };
+  const bcLd = breadcrumbJsonLd([{ name: "FAQ", path: "/faq" }]);
   return (
     <div className="min-h-screen bg-cream">
       <SiteHeader brand={(data.settings.brand as any) ?? {}} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(bcLd) }} />
       <main id="main" tabIndex={-1} className="focus:outline-none">
+      <Breadcrumbs items={[{ name: "FAQ", path: "/faq" }]} />
       <h1 className="sr-only">Frequently Asked Questions</h1>
       <section className="px-6 md:px-10 py-20">
         <div className="mx-auto max-w-3xl">
