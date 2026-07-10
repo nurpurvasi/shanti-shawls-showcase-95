@@ -70,58 +70,85 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         queryFn: () => fetchStorefront(),
       });
       const brand = (data.settings.brand as any) ?? {};
-      return { faviconUrl: brand.favicon_url as string | undefined };
+      const seo = (data.settings.seo as any) ?? {};
+      const contact = (data.settings.contact as any) ?? {};
+      const social = (data.settings.social as any) ?? {};
+      return {
+        faviconUrl: (brand.favicon_url as string | undefined) ?? undefined,
+        seo: {
+          title: seo.default_title || brand.name || "Shanti Shawls Emporium",
+          description: seo.default_description || brand.tagline || "Premium woollen shawls, ladies suits, stoles, sarees & traditional Himachali caps.",
+          keywords: seo.keywords || "",
+          ogImage: seo.og_image_url || brand.logo_url || undefined,
+          themeColor: seo.theme_color || "#fdfbf7",
+          siteName: brand.name || "Shanti Shawls Emporium",
+          gscVerification: seo.gsc_verification || "",
+        },
+        jsonLd: {
+          name: brand.name || "Shanti Shawls Emporium",
+          description: seo.default_description || brand.tagline || "",
+          founded: brand.established || "",
+          phone: contact.phone || "",
+          email: contact.email || "",
+          address: contact.address || "",
+          sameAs: [social.facebook, social.instagram, social.youtube, social.twitter].filter(Boolean),
+        },
+      };
     } catch {
-      return { faviconUrl: undefined };
+      return { faviconUrl: undefined, seo: null, jsonLd: null } as any;
     }
   },
-  head: ({ loaderData }) => ({
-    meta: [
+  head: ({ loaderData }) => {
+    const seo = loaderData?.seo;
+    const jsonLd = loaderData?.jsonLd;
+    const meta: Array<Record<string, string>> = [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Shanti Shawls Emporium — Premium Woollen Shawls, Suits & Sarees | Nurpur, Himachal Pradesh" },
-      { name: "description", content: "Trusted woollen garments and handicrafts emporium in Village Bodh, Jassur, Nurpur (Kangra), Himachal Pradesh. Premium shawls, ladies suits, winter stoles, sarees and traditional Himachali caps — retail & wholesale." },
-      { name: "keywords", content: "Shanti Shawls Emporium, Kangra shawls, Himachali caps, Kullu shawl, Kinnauri cap, woollen suits, winter stoles, sarees, Nurpur, Jassur, Kangra, Himachal Pradesh" },
-      { name: "author", content: "Shanti Shawls Emporium" },
-      { property: "og:site_name", content: "Shanti Shawls Emporium" },
+      { title: seo?.title || "Shanti Shawls Emporium" },
+      { name: "description", content: seo?.description || "" },
+      { name: "author", content: seo?.siteName || "Shanti Shawls Emporium" },
+      { property: "og:site_name", content: seo?.siteName || "Shanti Shawls Emporium" },
       { property: "og:type", content: "website" },
       { property: "og:locale", content: "en_IN" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "theme-color", content: "#fdfbf7" },
-    ],
-    links: [
-      { rel: "stylesheet", href: appCss },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,700;1,6..96,400&family=Inter:wght@300;400;500;600&display=swap" },
-      { rel: "icon", href: loaderData?.faviconUrl || "/favicon.ico" },
-    ],
-    scripts: [
-      {
+      { name: "theme-color", content: seo?.themeColor || "#fdfbf7" },
+    ];
+    if (seo?.keywords) meta.push({ name: "keywords", content: seo.keywords });
+    if (seo?.gscVerification) meta.push({ name: "google-site-verification", content: seo.gscVerification });
+    if (seo?.ogImage) {
+      meta.push({ property: "og:image", content: seo.ogImage });
+      meta.push({ name: "twitter:image", content: seo.ogImage });
+    }
+    const scripts: any[] = [];
+    if (jsonLd) {
+      scripts.push({
         type: "application/ld+json",
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "ClothingStore",
-          name: "Shanti Shawls Emporium",
-          description: "Premium woollen shawls, ladies suits, stoles, sarees and traditional Himachali caps. A trusted family emporium in Kangra, Himachal Pradesh.",
-          foundingDate: "1985",
-          telephone: "+91-9418248882",
-          email: "shantishawlsemporium@gmail.com",
-          address: {
-            "@type": "PostalAddress",
-            streetAddress: "Village Bodh, PO Jassur, Tehsil Nurpur",
-            addressLocality: "Nurpur",
-            addressRegion: "Himachal Pradesh",
-            addressCountry: "IN",
-          },
-          sameAs: [
-            "https://www.facebook.com/share/1D35NWUmVW/?mibextid=wwXIfr",
-            "https://www.instagram.com/shanti_shawls_emporium",
-          ],
+          name: jsonLd.name,
+          description: jsonLd.description,
+          ...(jsonLd.founded ? { foundingDate: String(jsonLd.founded) } : {}),
+          ...(jsonLd.phone ? { telephone: jsonLd.phone } : {}),
+          ...(jsonLd.email ? { email: jsonLd.email } : {}),
+          ...(jsonLd.address ? { address: { "@type": "PostalAddress", streetAddress: jsonLd.address, addressCountry: "IN" } } : {}),
+          ...(jsonLd.sameAs?.length ? { sameAs: jsonLd.sameAs } : {}),
         }),
-      },
-    ],
-  }),
+      });
+    }
+    return {
+      meta,
+      links: [
+        { rel: "stylesheet", href: appCss },
+        { rel: "preconnect", href: "https://fonts.googleapis.com" },
+        { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+        { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,700;1,6..96,400&family=Inter:wght@300;400;500;600&display=swap" },
+        { rel: "icon", href: loaderData?.faviconUrl || "/favicon.ico" },
+      ],
+      scripts,
+    };
+  },
+
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,

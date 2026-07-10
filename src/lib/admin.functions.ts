@@ -7,10 +7,10 @@ async function assertAdmin(supabase: any, userId: string) {
     .from("user_roles")
     .select("role")
     .eq("user_id", userId)
-    .eq("role", "admin")
-    .maybeSingle();
-  if (error || !data) throw new Error("Forbidden: admin only");
+    .in("role", ["admin", "super_admin"]);
+  if (error || !data || data.length === 0) throw new Error("Forbidden: admin only");
 }
+
 
 export const checkIsAdmin = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -18,11 +18,88 @@ export const checkIsAdmin = createServerFn({ method: "GET" })
     const { data } = await context.supabase
       .from("user_roles")
       .select("role")
-      .eq("user_id", context.userId)
-      .eq("role", "admin")
-      .maybeSingle();
-    return { isAdmin: !!data };
+      .eq("user_id", context.userId);
+    const roles = (data ?? []).map((r: any) => r.role);
+    return {
+      isAdmin: roles.includes("admin") || roles.includes("super_admin"),
+      isSuperAdmin: roles.includes("super_admin"),
+    };
   });
+
+async function assertSuperAdmin(supabase: any, userId: string) {
+  const { data } = await supabase
+    .from("user_roles").select("role")
+    .eq("user_id", userId).eq("role", "super_admin").maybeSingle();
+  if (!data) throw new Error("Forbidden: super admin only");
+}
+
+// Super-admin-only: list all users with their roles
+export const listUsers = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertSuperAdmin(context.supabase, context.userId);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const [{ data: authData, error: authErr }, { data: rolesData }] = await Promise.all([
+      supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 200 }),
+      context.supabase.from("user_roles").select("user_id, role"),
+    ]);
+    if (authErr) throw authErr;
+    const rolesByUser: Record<string, string[]> = {};
+    (rolesData ?? []).forEach((r: any) => {
+      (rolesByUser[r.user_id] = rolesByUser[r.user_id] || []).push(r.role);
+    });
+    return (authData?.users ?? []).map((u) => ({
+      id: u.id,
+      email: u.email,
+      created_at: u.created_at,
+      last_sign_in_at: u.last_sign_in_at,
+      roles: rolesByUser[u.id] ?? [],
+    }));
+  });
+
+const roleMutSchema = z.object({
+  user_id: z.string().uuid(),
+  role: z.enum(["admin", "super_admin", "user"]),
+  grant: z.boolean(),
+});
+
+export const setUserRole = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => roleMutSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    await assertSuperAdmin(context.supabase, context.userId);
+    // Prevent super admin from removing their own super_admin role (lockout guard)
+    if (!data.grant && data.role === "super_admin" && data.user_id === context.userId) {
+      throw new Error("You cannot remove your own Super Admin role.");
+    }
+    if (data.grant) {
+      const { error } = await context.supabase
+        .from("user_roles")
+        .upsert({ user_id: data.user_id, role: data.role }, { onConflict: "user_id,role" });
+      if (error) throw error;
+    } else {
+      const { error } = await context.supabase
+        .from("user_roles")
+        .delete()
+        .eq("user_id", data.user_id)
+        .eq("role", data.role);
+      if (error) throw error;
+    }
+    return { ok: true };
+  });
+
+export const deleteUser = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => z.object({ user_id: z.string().uuid() }).parse(input))
+  .handler(async ({ data, context }) => {
+    await assertSuperAdmin(context.supabase, context.userId);
+    if (data.user_id === context.userId) throw new Error("You cannot delete your own account.");
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin.auth.admin.deleteUser(data.user_id);
+    if (error) throw error;
+    return { ok: true };
+  });
+
 
 // Admin-only unfiltered snapshot of all content (includes hidden/inactive rows)
 export const fetchAdminData = createServerFn({ method: "GET" })
