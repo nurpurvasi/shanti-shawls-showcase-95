@@ -11,8 +11,10 @@ import {
   upsertGalleryItem, deleteGalleryItem,
   upsertSetting, upsertSection, deleteSection,
   uploadMedia,
+  checkIsAdmin, listUsers, setUserRole, deleteUser,
 } from "@/lib/admin.functions";
 import { fetchAdminData } from "@/lib/admin.functions";
+
 import { formatINR } from "@/lib/format";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
