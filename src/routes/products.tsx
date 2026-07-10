@@ -10,6 +10,10 @@ import { WhatsAppFab } from "@/components/WhatsAppFab";
 import { ProductCard } from "@/components/ProductCard";
 import { SectionHeading } from "@/components/SectionHeading";
 
+import { SITE_URL, breadcrumbJsonLd } from "@/lib/seo";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { PageSkeleton } from "@/components/PageSkeleton";
+
 const sfq = { queryKey: ["storefront"], queryFn: () => fetchStorefront() } as const;
 
 const searchSchema = z.object({
@@ -20,19 +24,22 @@ const searchSchema = z.object({
 export const Route = createFileRoute("/products")({
   head: () => ({
     meta: [
-      { title: "The Collection — Shanti Shawls Emporium" },
-      { name: "description", content: "Browse our hand-woven Kashmiri shawls — Pashmina, Kani, Sozni, Cashmere and silk-wool blends." },
+      { title: "Shop the Collection — Shawls, Suits, Stoles & Sarees | Shanti Shawls" },
+      { name: "description", content: "Browse hand-loomed Kullu, Kinnauri and Pashmina shawls, ladies suits, winter stoles, sarees and Himachali caps. In-store availability and pricing in INR." },
       { property: "og:title", content: "The Collection — Shanti Shawls Emporium" },
-      { property: "og:description", content: "Hand-woven Kashmiri shawls — Pashmina, Kani, Sozni, Cashmere." },
-      { property: "og:url", content: "/products" },
-      { property: "og:image", content: "/og-image.jpg" },
-      { name: "twitter:image", content: "/og-image.jpg" },
+      { property: "og:description", content: "Hand-woven shawls, ladies suits, stoles, sarees and Himachali caps." },
+      { property: "og:url", content: SITE_URL + "/products" },
     ],
-    links: [{ rel: "canonical", href: "/products" }],
+    links: [{ rel: "canonical", href: SITE_URL + "/products" }],
+    scripts: [{
+      type: "application/ld+json",
+      children: JSON.stringify(breadcrumbJsonLd([{ name: "Products", path: "/products" }])),
+    }],
   }),
   validateSearch: searchSchema,
   loader: ({ context }) => context.queryClient.ensureQueryData(sfq),
   component: ProductsPage,
+  pendingComponent: PageSkeleton,
 });
 
 function ProductsPage() {
@@ -52,10 +59,35 @@ function ProductsPage() {
     });
   }, [data, q, activeCat]);
 
+  const productListLd = useMemo(() => ({
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: filtered.slice(0, 24).map((p, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      item: {
+        "@type": "Product",
+        name: p.name,
+        image: (p.images ?? [])[0],
+        description: p.description ?? undefined,
+        ...(p.price != null ? {
+          offers: {
+            "@type": "Offer",
+            priceCurrency: "INR",
+            price: String(p.discount_price ?? p.price),
+            availability: p.is_available === false ? "https://schema.org/OutOfStock" : "https://schema.org/InStock",
+          },
+        } : {}),
+      },
+    })),
+  }), [filtered]);
+
   return (
     <div className="min-h-screen bg-cream">
       <SiteHeader brand={(data.settings.brand as any) ?? {}} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productListLd) }} />
       <main id="main" tabIndex={-1} className="focus:outline-none">
+      <Breadcrumbs items={[{ name: "Products", path: "/products" }]} />
       <h1 className="sr-only">The Collection — Hand-woven Kashmiri shawls, suits &amp; sarees</h1>
       <section className="px-6 md:px-10 pt-16 pb-10">
         <div className="mx-auto max-w-6xl">

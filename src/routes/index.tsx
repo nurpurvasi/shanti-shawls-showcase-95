@@ -9,6 +9,8 @@ import { ProductCard } from "@/components/ProductCard";
 import { SectionHeading } from "@/components/SectionHeading";
 import { heroImg, detailImg2, atelierImg, categoryImages, galleryFallback } from "@/lib/asset-map";
 import { formatINR, telLink, whatsappLink } from "@/lib/format";
+import { SITE_URL, absUrl } from "@/lib/seo";
+import { PageSkeleton } from "@/components/PageSkeleton";
 
 const storefrontQuery = {
   queryKey: ["storefront"],
@@ -19,17 +21,18 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Shanti Shawls Emporium — Premium Woollen Shawls, Suits & Sarees | Nurpur, Kangra" },
-      { name: "description", content: "A trusted woollen garments and handicrafts emporium in Village Bodh, Jassur, Nurpur (Kangra), Himachal Pradesh." },
+      { name: "description", content: "A trusted woollen garments and handicrafts emporium in Village Bodh, Jassur, Nurpur (Kangra), Himachal Pradesh. Premium shawls, ladies suits, stoles, sarees & Himachali caps." },
       { property: "og:title", content: "Shanti Shawls Emporium — Woollen heritage of Himachal Pradesh" },
       { property: "og:description", content: "Premium shawls, ladies suits, stoles, sarees & Himachali caps from Kangra." },
-      { property: "og:url", content: "/" },
-      { property: "og:image", content: "/og-image.jpg" },
-      { name: "twitter:image", content: "/og-image.jpg" },
+      { property: "og:url", content: SITE_URL + "/" },
+      { name: "twitter:title", content: "Shanti Shawls Emporium" },
+      { name: "twitter:description", content: "Woollen heritage of Himachal Pradesh." },
     ],
-    links: [{ rel: "canonical", href: "/" }],
+    links: [{ rel: "canonical", href: SITE_URL + "/" }],
   }),
   loader: ({ context }) => context.queryClient.ensureQueryData(storefrontQuery),
   component: HomePage,
+  pendingComponent: PageSkeleton,
 });
 
 function HomePage() {

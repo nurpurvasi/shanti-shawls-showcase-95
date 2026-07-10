@@ -9,21 +9,29 @@ import { atelierImg } from "@/lib/asset-map";
 
 const sfq = { queryKey: ["storefront"], queryFn: () => fetchStorefront() } as const;
 
+import { SITE_URL, breadcrumbJsonLd } from "@/lib/seo";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { PageSkeleton } from "@/components/PageSkeleton";
+
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "Our Story — Shanti Shawls Emporium" },
-      { name: "description", content: "Three generations of trust in woollen garments and handicrafts from the Kangra valley." },
+      { title: "Our Story — Shanti Shawls Emporium | Kangra Valley Heritage" },
+      { name: "description", content: "Three generations of trust in woollen garments and handicrafts from the Kangra valley of Himachal Pradesh. Meet the family behind Shanti Shawls Emporium." },
       { property: "og:title", content: "Our Story — Shanti Shawls Emporium" },
       { property: "og:description", content: "Three generations of woollen heritage from the Kangra valley of Himachal Pradesh." },
-      { property: "og:url", content: "/about" },
-      { property: "og:image", content: "/og-image.jpg" },
-      { name: "twitter:image", content: "/og-image.jpg" },
+      { property: "og:type", content: "article" },
+      { property: "og:url", content: SITE_URL + "/about" },
     ],
-    links: [{ rel: "canonical", href: "/about" }],
+    links: [{ rel: "canonical", href: SITE_URL + "/about" }],
+    scripts: [{
+      type: "application/ld+json",
+      children: JSON.stringify(breadcrumbJsonLd([{ name: "About", path: "/about" }])),
+    }],
   }),
   loader: ({ context }) => context.queryClient.ensureQueryData(sfq),
   component: AboutPage,
+  pendingComponent: PageSkeleton,
 });
 
 function AboutPage() {
@@ -47,6 +55,7 @@ function AboutPage() {
     <div className="min-h-screen bg-cream">
       <SiteHeader brand={brand} />
       <main id="main" tabIndex={-1} className="focus:outline-none">
+      <Breadcrumbs items={[{ name: "About", path: "/about" }]} />
       <article className="px-6 md:px-10 py-20">
         <div className="mx-auto max-w-3xl">
           <p className="eyebrow">{about.eyebrow ?? `Our Story · Est. ${brand.established ?? "1985"}`}</p>

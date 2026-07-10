@@ -11,21 +11,28 @@ import { galleryFallback, productImages } from "@/lib/asset-map";
 
 const sfq = { queryKey: ["storefront"], queryFn: () => fetchStorefront() } as const;
 
+import { SITE_URL, breadcrumbJsonLd } from "@/lib/seo";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { PageSkeleton } from "@/components/PageSkeleton";
+
 export const Route = createFileRoute("/gallery")({
   head: () => ({
     meta: [
-      { title: "Gallery — Inside Shanti Shawls Emporium" },
-      { name: "description", content: "Photographs from inside our Nurpur showroom and the shawls, suits and stoles we curate." },
+      { title: "Gallery — Inside the Shanti Shawls Emporium Showroom" },
+      { name: "description", content: "Photographs from inside our Nurpur showroom — the shawls, ladies suits, stoles and Himachali caps we curate every season." },
       { property: "og:title", content: "Gallery — Shanti Shawls Emporium" },
       { property: "og:description", content: "Inside our showroom — heritage Himachali textiles." },
-      { property: "og:url", content: "/gallery" },
-      { property: "og:image", content: "/og-image.jpg" },
-      { name: "twitter:image", content: "/og-image.jpg" },
+      { property: "og:url", content: SITE_URL + "/gallery" },
     ],
-    links: [{ rel: "canonical", href: "/gallery" }],
+    links: [{ rel: "canonical", href: SITE_URL + "/gallery" }],
+    scripts: [{
+      type: "application/ld+json",
+      children: JSON.stringify(breadcrumbJsonLd([{ name: "Gallery", path: "/gallery" }])),
+    }],
   }),
   loader: ({ context }) => context.queryClient.ensureQueryData(sfq),
   component: GalleryPage,
+  pendingComponent: PageSkeleton,
 });
 
 function GalleryPage() {
@@ -61,6 +68,7 @@ function GalleryPage() {
     <div className="min-h-screen bg-cream">
       <SiteHeader brand={(data.settings.brand as any) ?? {}} />
       <main id="main" tabIndex={-1} className="focus:outline-none">
+      <Breadcrumbs items={[{ name: "Gallery", path: "/gallery" }]} />
       <h1 className="sr-only">Gallery — Inside the emporium</h1>
       <section className="px-6 md:px-10 pt-20 pb-24 fade-up">
         <div className="mx-auto max-w-6xl">
