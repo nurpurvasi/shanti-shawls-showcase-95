@@ -11,6 +11,10 @@ import { SectionHeading } from "@/components/SectionHeading";
 import { telLink, whatsappLink } from "@/lib/format";
 import { toast } from "sonner";
 
+import { SITE_URL, breadcrumbJsonLd, localBusinessJsonLd } from "@/lib/seo";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { PageSkeleton } from "@/components/PageSkeleton";
+
 const sfq = { queryKey: ["storefront"], queryFn: () => fetchStorefront() } as const;
 
 const contactSchema = z.object({
@@ -22,18 +26,21 @@ const contactSchema = z.object({
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact — Shanti Shawls Emporium, Nurpur (Kangra), Himachal Pradesh" },
-      { name: "description", content: "Phone, WhatsApp, email and showroom address for Shanti Shawls Emporium. We respond within the same day." },
+      { title: "Contact & Showroom — Shanti Shawls Emporium, Nurpur (Kangra), HP" },
+      { name: "description", content: "Phone, WhatsApp, email and showroom address for Shanti Shawls Emporium in Village Bodh, Jassur, Nurpur. Same-day replies during showroom hours." },
       { property: "og:title", content: "Contact — Shanti Shawls Emporium" },
-      { property: "og:description", content: "Phone, WhatsApp, email and showroom address." },
-      { property: "og:url", content: "/contact" },
-      { property: "og:image", content: "/og-image.jpg" },
-      { name: "twitter:image", content: "/og-image.jpg" },
+      { property: "og:description", content: "Phone, WhatsApp, email and showroom address in Nurpur, Kangra." },
+      { property: "og:url", content: SITE_URL + "/contact" },
     ],
-    links: [{ rel: "canonical", href: "/contact" }],
+    links: [{ rel: "canonical", href: SITE_URL + "/contact" }],
+    scripts: [{
+      type: "application/ld+json",
+      children: JSON.stringify(breadcrumbJsonLd([{ name: "Contact", path: "/contact" }])),
+    }],
   }),
   loader: ({ context }) => context.queryClient.ensureQueryData(sfq),
   component: ContactPage,
+  pendingComponent: PageSkeleton,
 });
 
 function ContactPage() {
