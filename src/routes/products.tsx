@@ -103,7 +103,7 @@ function ProductsPage() {
             <p className="text-center text-muted-foreground py-20">No pieces match that search. Try clearing the filter.</p>
           ) : (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-5 gap-y-12">
-              {filtered.map((p) => (<ProductCard key={p.id} p={p} />))}
+              {filtered.map((p) => (<ProductCard key={p.id} p={p} categoryName={data.categories.find((c) => c.id === p.category_id)?.name} />))}
             </div>
           )}
         </div>

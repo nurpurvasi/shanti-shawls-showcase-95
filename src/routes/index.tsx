@@ -244,7 +244,7 @@ function HomePage() {
               </Link>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-x-5 gap-y-10">
-              {arrivals.map((p) => (<ProductCard key={p.id} p={p} />))}
+              {arrivals.map((p) => (<ProductCard key={p.id} p={p} categoryName={data.categories.find((c) => c.id === p.category_id)?.name} />))}
             </div>
           </div>
         </section>

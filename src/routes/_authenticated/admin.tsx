@@ -139,10 +139,10 @@ function OverviewTab({ data, isSuperAdmin }: { data: any; isSuperAdmin: boolean 
     { label: "Collections", value: (data.categories ?? []).length },
     { label: "Gallery images", value: (data.gallery ?? []).length },
     { label: "Reviews", value: (data.reviews ?? []).length },
-    { label: "Featured", value: products.filter((p: any) => p.featured).length },
-    { label: "Best sellers", value: products.filter((p: any) => p.best_seller).length },
-    { label: "New arrivals", value: products.filter((p: any) => p.new_arrival).length },
-    { label: "Out of stock", value: products.filter((p: any) => !p.in_stock).length },
+    { label: "Featured", value: products.filter((p: any) => p.is_featured).length },
+    { label: "Best sellers", value: products.filter((p: any) => p.is_best_seller).length },
+    { label: "New arrivals", value: products.filter((p: any) => p.is_new_arrival).length },
+    { label: "Out of stock", value: products.filter((p: any) => !p.is_available).length },
   ];
   return (
     <div className="space-y-8">
@@ -702,7 +702,7 @@ function SettingsTab({ data, onChange }: any) {
         <h3 className="font-display text-xl text-maroon">Home Page — Copy</h3>
         <p className="text-xs text-muted-foreground">Section headings and promotional strip that appear on the home page. Leave blank to hide.</p>
         <div className="grid md:grid-cols-2 gap-4">
-          <Field label="Promo strip text (top bar)"><input className={inputCls} value={home.promo_text ?? ""} onChange={(e) => setHome({ ...home, promo_text: e.target.value })} placeholder="Free shipping across India this winter" /></Field>
+          <Field label="Promo strip text (top bar)"><input className={inputCls} value={home.promo_text ?? ""} onChange={(e) => setHome({ ...home, promo_text: e.target.value })} placeholder="Visit our Nurpur showroom this winter" /></Field>
           <Field label="Promo strip link (optional)"><input className={inputCls} value={home.promo_link ?? ""} onChange={(e) => setHome({ ...home, promo_link: e.target.value })} placeholder="/products" /></Field>
         </div>
         <div className="grid md:grid-cols-2 gap-4 pt-2">
