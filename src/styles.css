@@ -63,15 +63,15 @@
 :root {
   --radius: 0.5rem;
 
-  /* Brand palette — Kashmiri heritage */
-  --cream: oklch(0.985 0.012 80);
-  --ivory: oklch(0.97 0.018 75);
-  --maroon: oklch(0.32 0.12 25);
-  --maroon-deep: oklch(0.24 0.1 25);
-  --gold: oklch(0.72 0.11 80);
-  --gold-soft: oklch(0.84 0.07 82);
-  --ink: oklch(0.18 0.01 60);
-  --mist: oklch(0.92 0.01 80);
+  /* Brand palette — Ivory & Burgundy (luxury editorial) */
+  --cream: oklch(0.965 0.011 85);       /* #faf6ef ivory */
+  --ivory: oklch(0.9 0.024 85);         /* #e8dfce warm cream */
+  --maroon: oklch(0.36 0.13 20);        /* #7a1c2e burgundy */
+  --maroon-deep: oklch(0.28 0.11 20);   /* deeper burgundy */
+  --gold: oklch(0.68 0.085 70);         /* warm champagne */
+  --gold-soft: oklch(0.82 0.05 75);
+  --ink: oklch(0.19 0 0);               /* #1a1a1a */
+  --mist: oklch(0.94 0.015 85);
 
   --background: var(--cream);
   --foreground: var(--ink);
