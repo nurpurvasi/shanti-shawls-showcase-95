@@ -10,6 +10,10 @@ import { WhatsAppFab } from "@/components/WhatsAppFab";
 import { ProductCard } from "@/components/ProductCard";
 import { SectionHeading } from "@/components/SectionHeading";
 
+import { SITE_URL, breadcrumbJsonLd } from "@/lib/seo";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { PageSkeleton } from "@/components/PageSkeleton";
+
 const sfq = { queryKey: ["storefront"], queryFn: () => fetchStorefront() } as const;
 
 const searchSchema = z.object({
@@ -20,19 +24,22 @@ const searchSchema = z.object({
 export const Route = createFileRoute("/products")({
   head: () => ({
     meta: [
-      { title: "The Collection — Shanti Shawls Emporium" },
-      { name: "description", content: "Browse our hand-woven Kashmiri shawls — Pashmina, Kani, Sozni, Cashmere and silk-wool blends." },
+      { title: "Shop the Collection — Shawls, Suits, Stoles & Sarees | Shanti Shawls" },
+      { name: "description", content: "Browse hand-loomed Kullu, Kinnauri and Pashmina shawls, ladies suits, winter stoles, sarees and Himachali caps. In-store availability and pricing in INR." },
       { property: "og:title", content: "The Collection — Shanti Shawls Emporium" },
-      { property: "og:description", content: "Hand-woven Kashmiri shawls — Pashmina, Kani, Sozni, Cashmere." },
-      { property: "og:url", content: "/products" },
-      { property: "og:image", content: "/og-image.jpg" },
-      { name: "twitter:image", content: "/og-image.jpg" },
+      { property: "og:description", content: "Hand-woven shawls, ladies suits, stoles, sarees and Himachali caps." },
+      { property: "og:url", content: SITE_URL + "/products" },
     ],
-    links: [{ rel: "canonical", href: "/products" }],
+    links: [{ rel: "canonical", href: SITE_URL + "/products" }],
+    scripts: [{
+      type: "application/ld+json",
+      children: JSON.stringify(breadcrumbJsonLd([{ name: "Products", path: "/products" }])),
+    }],
   }),
   validateSearch: searchSchema,
   loader: ({ context }) => context.queryClient.ensureQueryData(sfq),
   component: ProductsPage,
+  pendingComponent: PageSkeleton,
 });
 
 function ProductsPage() {
