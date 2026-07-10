@@ -83,14 +83,16 @@ function AdminPage() {
       <main className="px-6 md:px-10 py-10 max-w-7xl mx-auto">
         <Tabs defaultValue="products" className="w-full">
           <TabsList className="flex flex-wrap gap-1 bg-ivory border border-maroon/10 rounded-full p-1 h-auto w-full md:w-auto">
-            {[
-              ["products","Products"],
-              ["categories","Collections"],
-              ["gallery","Gallery"],
-              ["reviews","Reviews"],
-              ["sections","Pages & Content"],
-              ["settings","Site Settings"],
-            ].map(([v,l]) => (
+            {([
+              ["products","Products", true],
+              ["categories","Collections", true],
+              ["gallery","Gallery", true],
+              ["reviews","Reviews", true],
+              ["sections","Pages & Content", true],
+              ["settings","Site Settings", true],
+              ["seo","SEO", isSuperAdmin],
+              ["users","Users", isSuperAdmin],
+            ] as const).filter(([,,show]) => show).map(([v,l]) => (
               <TabsTrigger key={v} value={v} className="rounded-full px-4 py-2 text-xs uppercase tracking-[0.18em] data-[state=active]:bg-maroon data-[state=active]:text-cream">
                 {l}
               </TabsTrigger>
@@ -103,7 +105,10 @@ function AdminPage() {
           <TabsContent value="reviews" className="mt-8"><ReviewsTab data={data} onChange={refresh} /></TabsContent>
           <TabsContent value="sections" className="mt-8"><SectionsTab data={data} onChange={refresh} /></TabsContent>
           <TabsContent value="settings" className="mt-8"><SettingsTab data={data} onChange={refresh} /></TabsContent>
+          {isSuperAdmin && <TabsContent value="seo" className="mt-8"><SeoTab data={data} onChange={refresh} /></TabsContent>}
+          {isSuperAdmin && <TabsContent value="users" className="mt-8"><UsersTab /></TabsContent>}
         </Tabs>
+
       </main>
     </div>
   );
