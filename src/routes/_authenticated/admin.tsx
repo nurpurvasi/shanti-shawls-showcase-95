@@ -702,7 +702,7 @@ function SettingsTab({ data, onChange }: any) {
         <h3 className="font-display text-xl text-maroon">Home Page — Copy</h3>
         <p className="text-xs text-muted-foreground">Section headings and promotional strip that appear on the home page. Leave blank to hide.</p>
         <div className="grid md:grid-cols-2 gap-4">
-          <Field label="Promo strip text (top bar)"><input className={inputCls} value={home.promo_text ?? ""} onChange={(e) => setHome({ ...home, promo_text: e.target.value })} placeholder="Free shipping across India this winter" /></Field>
+          <Field label="Promo strip text (top bar)"><input className={inputCls} value={home.promo_text ?? ""} onChange={(e) => setHome({ ...home, promo_text: e.target.value })} placeholder="Visit our Nurpur showroom this winter" /></Field>
           <Field label="Promo strip link (optional)"><input className={inputCls} value={home.promo_link ?? ""} onChange={(e) => setHome({ ...home, promo_link: e.target.value })} placeholder="/products" /></Field>
         </div>
         <div className="grid md:grid-cols-2 gap-4 pt-2">
