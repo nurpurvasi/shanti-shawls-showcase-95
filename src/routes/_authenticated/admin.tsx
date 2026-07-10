@@ -31,6 +31,8 @@ export const Route = createFileRoute("/_authenticated/admin")({
 function AdminPage() {
   const navigate = useNavigate();
   const qc = useQueryClient();
+  const [active, setActive] = useState("overview");
+  const [mobileOpen, setMobileOpen] = useState(false);
   const { data, refetch, isLoading } = useQuery({
     queryKey: ["admin-data"],
     queryFn: () => fetchAdminData(),
@@ -68,9 +70,6 @@ function AdminPage() {
     { v: "seo", l: "SEO", icon: Search, show: isSuperAdmin },
     { v: "users", l: "Users", icon: UsersIcon, show: isSuperAdmin },
   ].filter(x => x.show);
-
-  const [active, setActive] = useState("overview");
-  const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-cream flex">
