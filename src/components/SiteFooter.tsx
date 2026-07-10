@@ -47,14 +47,15 @@ export function SiteFooter({
   const established = brand?.established ?? "1985";
 
   return (
-    <footer className="bg-ink text-cream mt-24">
+    <footer className="relative bg-ink text-cream mt-24">
+      <div aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
       <div className="mx-auto max-w-6xl px-6 md:px-10 pt-20 pb-10">
         <div className="grid gap-12 md:grid-cols-4">
           {/* Brand */}
           <div className="md:col-span-1">
-            <h2 className="font-display text-2xl tracking-tight">{brandName}</h2>
-            <p className="mt-3 text-[10px] uppercase tracking-[0.3em] text-gold">Est. {established}</p>
-            <p className="mt-4 text-cream/60 text-sm leading-relaxed">{tagline}</p>
+            <h2 className="font-display italic text-3xl tracking-tight">{brandName}</h2>
+            <p className="mt-3 text-[10px] uppercase tracking-[0.35em] text-gold">Est. {established}</p>
+            <p className="mt-5 text-cream/65 text-sm leading-relaxed">{tagline}</p>
             {(social?.facebook || social?.instagram) && (
               <div className="mt-6 flex gap-3">
                 {social?.facebook && (

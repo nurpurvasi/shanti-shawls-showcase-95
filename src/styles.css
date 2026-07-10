@@ -42,8 +42,8 @@
   --color-ink: var(--ink);
   --color-mist: var(--mist);
 
-  --font-serif: "Bodoni Moda", ui-serif, Georgia, serif;
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Instrument Serif", ui-serif, Georgia, serif;
+  --font-sans: "Work Sans", ui-sans-serif, system-ui, sans-serif;
 
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
@@ -63,15 +63,15 @@
 :root {
   --radius: 0.5rem;
 
-  /* Brand palette — Kashmiri heritage */
-  --cream: oklch(0.985 0.012 80);
-  --ivory: oklch(0.97 0.018 75);
-  --maroon: oklch(0.32 0.12 25);
-  --maroon-deep: oklch(0.24 0.1 25);
-  --gold: oklch(0.72 0.11 80);
-  --gold-soft: oklch(0.84 0.07 82);
-  --ink: oklch(0.18 0.01 60);
-  --mist: oklch(0.92 0.01 80);
+  /* Brand palette — Ivory & Burgundy (luxury editorial) */
+  --cream: oklch(0.965 0.011 85);       /* #faf6ef ivory */
+  --ivory: oklch(0.9 0.024 85);         /* #e8dfce warm cream */
+  --maroon: oklch(0.36 0.13 20);        /* #7a1c2e burgundy */
+  --maroon-deep: oklch(0.28 0.11 20);   /* deeper burgundy */
+  --gold: oklch(0.68 0.085 70);         /* warm champagne */
+  --gold-soft: oklch(0.82 0.05 75);
+  --ink: oklch(0.19 0 0);               /* #1a1a1a */
+  --mist: oklch(0.94 0.015 85);
 
   --background: var(--cream);
   --foreground: var(--ink);
@@ -141,11 +141,15 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
     font-family: var(--font-sans);
+    font-weight: 400;
     font-feature-settings: "ss01", "cv11";
+    -webkit-font-smoothing: antialiased;
   }
   h1, h2, h3, h4, .font-display {
     font-family: var(--font-serif);
-    letter-spacing: -0.01em;
+    font-weight: 400;
+    letter-spacing: -0.015em;
+    line-height: 1.05;
   }
   ::selection {
     background-color: var(--color-maroon);
@@ -180,4 +184,109 @@
   letter-spacing: 0.4em;
   text-transform: uppercase;
   color: var(--color-gold);
+}
+
+/* Animated underline for editorial nav links */
+@utility link-underline {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -3px;
+    width: 100%;
+    height: 1px;
+    background-color: currentColor;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.4s cubic-bezier(0.65, 0, 0.35, 1);
+  }
+  &:hover::after,
+  &[data-active="true"]::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+}
+
+/* Editorial card lift on hover */
+@utility card-lift {
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.6s ease;
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 30px 60px -30px color-mix(in oklch, var(--color-ink) 45%, transparent);
+  }
+}
+
+/* Soft luxury shadow */
+@utility shadow-luxe {
+  box-shadow: 0 20px 50px -30px color-mix(in oklch, var(--color-ink) 40%, transparent);
+}
+
+/* Section fade-in-up on mount */
+@utility fade-up {
+  animation: fade-up 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Kenburns idle motion for hero backgrounds */
+@utility kenburns {
+  animation: kenburns 22s ease-in-out infinite alternate;
+}
+@keyframes kenburns {
+  from { transform: scale(1); }
+  to   { transform: scale(1.08); }
+}
+
+/* Marquee for trust badges */
+@utility marquee {
+  animation: marquee 40s linear infinite;
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* Premium CTA button */
+@utility btn-luxe {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.95rem 1.75rem;
+  border-radius: 9999px;
+  background-color: var(--color-maroon);
+  color: var(--color-cream);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.3s ease, box-shadow 0.4s ease;
+  box-shadow: 0 15px 30px -18px color-mix(in oklch, var(--color-maroon) 70%, transparent);
+  &:hover {
+    background-color: var(--color-maroon-deep);
+    transform: translateY(-2px);
+    box-shadow: 0 22px 40px -18px color-mix(in oklch, var(--color-maroon) 85%, transparent);
+  }
+}
+
+@utility btn-outline-luxe {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.9rem 1.6rem;
+  border-radius: 9999px;
+  border: 1px solid color-mix(in oklch, var(--color-maroon) 30%, transparent);
+  color: var(--color-maroon);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  &:hover {
+    background-color: var(--color-maroon);
+    color: var(--color-cream);
+    border-color: var(--color-maroon);
+  }
 }
