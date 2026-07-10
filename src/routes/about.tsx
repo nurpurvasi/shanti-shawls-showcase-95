@@ -55,6 +55,7 @@ function AboutPage() {
     <div className="min-h-screen bg-cream">
       <SiteHeader brand={brand} />
       <main id="main" tabIndex={-1} className="focus:outline-none">
+      <Breadcrumbs items={[{ name: "About", path: "/about" }]} />
       <article className="px-6 md:px-10 py-20">
         <div className="mx-auto max-w-3xl">
           <p className="eyebrow">{about.eyebrow ?? `Our Story · Est. ${brand.established ?? "1985"}`}</p>
