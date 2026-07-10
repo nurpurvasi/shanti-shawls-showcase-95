@@ -17,7 +17,7 @@ import { fetchStorefront } from "@/lib/storefront.functions";
 
 function NotFoundComponent() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+    <main id="main" className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
         <p className="eyebrow">404</p>
         <h1 className="mt-3 text-4xl font-display text-maroon">Page not found</h1>
@@ -31,7 +31,7 @@ function NotFoundComponent() {
           Go home
         </Link>
       </div>
-    </div>
+    </main>
   );
 }
 
