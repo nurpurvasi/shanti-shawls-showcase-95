@@ -59,10 +59,35 @@ function ProductsPage() {
     });
   }, [data, q, activeCat]);
 
+  const productListLd = useMemo(() => ({
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    itemListElement: filtered.slice(0, 24).map((p, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      item: {
+        "@type": "Product",
+        name: p.name,
+        image: (p.images ?? [])[0],
+        description: p.description ?? undefined,
+        ...(p.price != null ? {
+          offers: {
+            "@type": "Offer",
+            priceCurrency: "INR",
+            price: String(p.discount_price ?? p.price),
+            availability: p.is_available === false ? "https://schema.org/OutOfStock" : "https://schema.org/InStock",
+          },
+        } : {}),
+      },
+    })),
+  }), [filtered]);
+
   return (
     <div className="min-h-screen bg-cream">
       <SiteHeader brand={(data.settings.brand as any) ?? {}} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productListLd) }} />
       <main id="main" tabIndex={-1} className="focus:outline-none">
+      <Breadcrumbs items={[{ name: "Products", path: "/products" }]} />
       <h1 className="sr-only">The Collection — Hand-woven Kashmiri shawls, suits &amp; sarees</h1>
       <section className="px-6 md:px-10 pt-16 pb-10">
         <div className="mx-auto max-w-6xl">
