@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Facebook, Instagram, MapPin, Phone, Mail, MessageCircle } from "lucide-react";
+import { Facebook, Instagram, MapPin, Phone, Mail, MessageCircle, Youtube } from "lucide-react";
 import { telLink, whatsappLink } from "@/lib/format";
 
 type Contact = {
