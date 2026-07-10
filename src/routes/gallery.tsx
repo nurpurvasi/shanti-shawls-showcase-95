@@ -68,6 +68,7 @@ function GalleryPage() {
     <div className="min-h-screen bg-cream">
       <SiteHeader brand={(data.settings.brand as any) ?? {}} />
       <main id="main" tabIndex={-1} className="focus:outline-none">
+      <Breadcrumbs items={[{ name: "Gallery", path: "/gallery" }]} />
       <h1 className="sr-only">Gallery — Inside the emporium</h1>
       <section className="px-6 md:px-10 pt-20 pb-24 fade-up">
         <div className="mx-auto max-w-6xl">
