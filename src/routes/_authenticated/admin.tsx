@@ -790,6 +790,7 @@ function SettingsTab({ data, onChange }: any) {
         <h3 className="font-display text-xl text-maroon">Social Links</h3>
         <Field label="Facebook URL"><input className={inputCls} value={social.facebook ?? ""} onChange={(e) => setSocial({ ...social, facebook: e.target.value })} placeholder="https://www.facebook.com/..." /></Field>
         <Field label="Instagram URL"><input className={inputCls} value={social.instagram ?? ""} onChange={(e) => setSocial({ ...social, instagram: e.target.value })} placeholder="https://www.instagram.com/..." /></Field>
+        <Field label="YouTube URL"><input className={inputCls} value={social.youtube ?? ""} onChange={(e) => setSocial({ ...social, youtube: e.target.value })} placeholder="https://www.youtube.com/@..." /></Field>
       </section>
 
       <section className="rounded-2xl border border-maroon/10 bg-ivory p-6 space-y-4">
