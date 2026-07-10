@@ -7,23 +7,30 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { WhatsAppFab } from "@/components/WhatsAppFab";
 import { SectionHeading } from "@/components/SectionHeading";
 
+import { SITE_URL, breadcrumbJsonLd } from "@/lib/seo";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { PageSkeleton } from "@/components/PageSkeleton";
+
 const sfq = { queryKey: ["storefront"], queryFn: () => fetchStorefront() } as const;
 
 export const Route = createFileRoute("/reviews")({
   head: () => ({
     meta: [
-      { title: "Reviews — What patrons say about Shanti Shawls" },
-      { name: "description", content: "Real reviews from Shanti Shawls Emporium customers across India." },
+      { title: "Customer Reviews & Testimonials — Shanti Shawls Emporium" },
+      { name: "description", content: "Read authentic reviews from Shanti Shawls Emporium customers across India — on shawl quality, authenticity and the family showroom experience." },
       { property: "og:title", content: "Customer Reviews — Shanti Shawls" },
-      { property: "og:description", content: "Real reviews from Shanti Shawls Emporium customers across India." },
-      { property: "og:url", content: "/reviews" },
-      { property: "og:image", content: "/og-image.jpg" },
-      { name: "twitter:image", content: "/og-image.jpg" },
+      { property: "og:description", content: "Real reviews from customers across India." },
+      { property: "og:url", content: SITE_URL + "/reviews" },
     ],
-    links: [{ rel: "canonical", href: "/reviews" }],
+    links: [{ rel: "canonical", href: SITE_URL + "/reviews" }],
+    scripts: [{
+      type: "application/ld+json",
+      children: JSON.stringify(breadcrumbJsonLd([{ name: "Reviews", path: "/reviews" }])),
+    }],
   }),
   loader: ({ context }) => context.queryClient.ensureQueryData(sfq),
   component: ReviewsPage,
+  pendingComponent: PageSkeleton,
 });
 
 function ReviewsPage() {
