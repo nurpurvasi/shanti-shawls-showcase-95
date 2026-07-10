@@ -20,13 +20,13 @@ const storefrontQuery = {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Shanti Shawls Emporium — Premium Woollen Shawls, Suits & Sarees | Nurpur, Kangra" },
-      { name: "description", content: "A trusted woollen garments and handicrafts emporium in Village Bodh, Jassur, Nurpur (Kangra), Himachal Pradesh. Premium shawls, ladies suits, stoles, sarees & Himachali caps." },
-      { property: "og:title", content: "Shanti Shawls Emporium — Woollen heritage of Himachal Pradesh" },
-      { property: "og:description", content: "Premium shawls, ladies suits, stoles, sarees & Himachali caps from Kangra." },
+      { title: "Shanti Shawls Empo - Premium Woollen Shawls | Nurpur, Kangra" },
+      { name: "description", content: "A trusted woollen garments and handicrafts emporium in Village Bodh, Nurpur (Kangra), Himachal Pradesh. Premium shawls, ladies suits, stoles,  & Himachali caps." },
+      { property: "og:title", content: "Shanti Shawls Empo - Premium Woollen Shawls | Nurpur, Kangra" },
+      { property: "og:description", content: "A trusted woollen garments and handicrafts emporium in Village Bodh, Nurpur (Kangra), Himachal Pradesh. Premium shawls, ladies suits, stoles,  & Himachali caps." },
       { property: "og:url", content: SITE_URL + "/" },
-      { name: "twitter:title", content: "Shanti Shawls Emporium" },
-      { name: "twitter:description", content: "Woollen heritage of Himachal Pradesh." },
+      { name: "twitter:title", content: "Shanti Shawls Empo - Premium Woollen Shawls | Nurpur, Kangra" },
+      { name: "twitter:description", content: "A trusted woollen garments and handicrafts emporium in Village Bodh, Nurpur (Kangra), Himachal Pradesh. Premium shawls, ladies suits, stoles,  & Himachali caps." },
     ],
     links: [{ rel: "canonical", href: SITE_URL + "/" }],
   }),
