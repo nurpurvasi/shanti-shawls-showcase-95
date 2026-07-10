@@ -16,7 +16,7 @@ import {
 import { fetchAdminData } from "@/lib/admin.functions";
 
 import { formatINR } from "@/lib/format";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
