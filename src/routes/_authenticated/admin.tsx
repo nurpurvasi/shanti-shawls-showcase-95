@@ -139,10 +139,10 @@ function OverviewTab({ data, isSuperAdmin }: { data: any; isSuperAdmin: boolean 
     { label: "Collections", value: (data.categories ?? []).length },
     { label: "Gallery images", value: (data.gallery ?? []).length },
     { label: "Reviews", value: (data.reviews ?? []).length },
-    { label: "Featured", value: products.filter((p: any) => p.featured).length },
-    { label: "Best sellers", value: products.filter((p: any) => p.best_seller).length },
-    { label: "New arrivals", value: products.filter((p: any) => p.new_arrival).length },
-    { label: "Out of stock", value: products.filter((p: any) => !p.in_stock).length },
+    { label: "Featured", value: products.filter((p: any) => p.is_featured).length },
+    { label: "Best sellers", value: products.filter((p: any) => p.is_best_seller).length },
+    { label: "New arrivals", value: products.filter((p: any) => p.is_new_arrival).length },
+    { label: "Out of stock", value: products.filter((p: any) => !p.is_available).length },
   ];
   return (
     <div className="space-y-8">
