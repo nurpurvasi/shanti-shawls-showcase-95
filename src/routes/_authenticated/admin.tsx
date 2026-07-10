@@ -47,13 +47,20 @@ function AdminPage() {
 
   if (isLoading || !data) return <div className="min-h-screen grid place-items-center text-muted-foreground">Loading…</div>;
 
+  const brand = (data.settings?.brand as any) ?? {};
+
   return (
     <div className="min-h-screen bg-cream">
       <header className="border-b border-maroon/10 bg-ivory/80 backdrop-blur sticky top-0 z-40">
         <div className="px-6 md:px-10 py-4 flex items-center justify-between max-w-7xl mx-auto">
-          <div>
-            <p className="eyebrow">Admin</p>
-            <h1 className="font-display text-xl text-maroon">Shanti Shawls Emporium</h1>
+          <div className="flex items-center gap-3">
+            {brand.logo_url && (
+              <img src={brand.logo_url} alt={brand.name ?? "Shanti Shawls Emporium"} width={48} height={48} className="h-12 w-12 rounded-full object-contain" />
+            )}
+            <div>
+              <p className="eyebrow">Admin</p>
+              <h1 className="font-display text-xl text-maroon">{brand.name ?? "Shanti Shawls Emporium"}</h1>
+            </div>
           </div>
           <div className="flex items-center gap-2">
             <Link to="/" className="text-xs uppercase tracking-[0.18em] text-maroon hover:underline">View site</Link>

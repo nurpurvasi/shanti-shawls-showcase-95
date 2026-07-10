@@ -68,6 +68,17 @@ function HomePage() {
       <section className="px-6 md:px-10 pt-10 md:pt-16 pb-16 md:pb-24">
         <div className="mx-auto max-w-6xl grid gap-12 md:grid-cols-2 md:items-end">
           <div>
+            {brand.logo_url && (
+              <img
+                src={brand.logo_url}
+                alt={brand.name ?? "Shanti Shawls Emporium"}
+                width={128}
+                height={128}
+                className="mb-6 h-24 w-24 md:h-28 md:w-28 rounded-full object-contain"
+                loading="eager"
+                fetchPriority="high"
+              />
+            )}
             <p className="eyebrow">{hero.eyebrow ?? `Kangra Valley · Himachal Pradesh · Est. ${brand.established ?? "1985"}`}</p>
             <h1 className="mt-5 font-display text-5xl md:text-7xl leading-[1.05] text-balance text-maroon">
               {hero.title ?? "The Warmth of the Himalayas, Woven by Hand."}

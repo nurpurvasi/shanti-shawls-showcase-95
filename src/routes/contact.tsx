@@ -62,12 +62,18 @@ function ContactPage() {
     setName(""); setEmail(""); setMessage("");
   }
 
+  const brand = (data.settings.brand as any) ?? {};
   return (
     <div className="min-h-screen bg-cream">
-      <SiteHeader brand={(data.settings.brand as any) ?? {}} />
+      <SiteHeader brand={brand} />
       <main id="main" tabIndex={-1} className="focus:outline-none">
       <h1 className="sr-only">Contact Shanti Shawls Emporium — Nurpur, Kangra</h1>
       <section className="px-6 md:px-10 py-20">
+        {brand.logo_url && (
+          <div className="mx-auto max-w-6xl mb-10 flex justify-center">
+            <img src={brand.logo_url} alt={brand.name ?? "Shanti Shawls Emporium"} width={128} height={128} className="h-28 w-28 md:h-32 md:w-32 rounded-full object-contain" loading="eager" />
+          </div>
+        )}
         <div className="mx-auto max-w-6xl grid md:grid-cols-2 gap-16">
           <div>
             <SectionHeading eyebrow="Get In Touch" title="Come visit, or just say hello" align="left">
