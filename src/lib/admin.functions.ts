@@ -63,9 +63,12 @@ const productSchema = z.object({
   is_available: z.boolean().default(true),
   is_featured: z.boolean().default(false),
   is_new_arrival: z.boolean().default(false),
+  is_best_seller: z.boolean().default(false),
+  sku: z.string().max(80).optional().nullable(),
   material: z.string().max(200).optional().nullable(),
   sort_order: z.number().int().default(0),
 });
+
 
 export const upsertProduct = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
