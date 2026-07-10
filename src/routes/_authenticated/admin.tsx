@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { LogOut, Plus, Trash2, Star, Upload, Save, ImagePlus } from "lucide-react";
+import { LogOut, Plus, Trash2, Star, Upload, Save, ImagePlus, LayoutDashboard, Package, FolderTree, Images, MessageSquare, FileText, Settings as SettingsIcon, Search, Users as UsersIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   upsertProduct, deleteProduct,
