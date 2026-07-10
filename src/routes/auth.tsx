@@ -23,6 +23,19 @@ function AuthPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    // Handle email verification errors from URL hash (e.g. expired links)
+    if (typeof window !== "undefined" && window.location.hash.includes("error")) {
+      const params = new URLSearchParams(window.location.hash.slice(1));
+      const desc = params.get("error_description");
+      if (desc) toast.error(decodeURIComponent(desc.replace(/\+/g, " ")));
+      window.history.replaceState(null, "", window.location.pathname);
+    }
+    // Show a confirmation toast when the user arrives from a verification link
+    const search = new URLSearchParams(window.location.search);
+    if (search.get("verified") === "1") {
+      toast.success("Email verified. Please sign in.");
+      window.history.replaceState(null, "", window.location.pathname);
+    }
     supabase.auth.getSession().then(({ data }) => {
       if (data.session) navigate({ to: "/admin" });
     });
@@ -35,12 +48,12 @@ function AuthPage() {
       if (mode === "signup") {
         const { error } = await supabase.auth.signUp({
           email, password,
-          options: { emailRedirectTo: window.location.origin + "/admin" },
+          options: { emailRedirectTo: `${window.location.origin}/auth?verified=1` },
         });
         if (error) throw error;
-        toast.success("Account created. Check your email if confirmation is required, otherwise you're in.");
-        // attempt sign-in for convenience
-        await supabase.auth.signInWithPassword({ email, password });
+        toast.success("Account created. Check your email to confirm, then sign in.");
+        setMode("signin");
+        return;
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
@@ -53,6 +66,7 @@ function AuthPage() {
       setLoading(false);
     }
   }
+
 
   return (
     <div className="min-h-screen bg-cream">
