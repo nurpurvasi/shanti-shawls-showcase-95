@@ -66,9 +66,10 @@ function AdminPage() {
               <img src={brand.logo_url} alt={brand.name ?? "Shanti Shawls Emporium"} width={48} height={48} className="h-12 w-12 rounded-full object-contain" />
             )}
             <div>
-              <p className="eyebrow">Admin</p>
+              <p className="eyebrow">{isSuperAdmin ? "Super Admin" : "Admin"}</p>
               <h1 className="font-display text-xl text-maroon">{brand.name ?? "Shanti Shawls Emporium"}</h1>
             </div>
+
           </div>
           <div className="flex items-center gap-2">
             <Link to="/" className="text-xs uppercase tracking-[0.18em] text-maroon hover:underline">View site</Link>
