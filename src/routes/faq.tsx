@@ -13,9 +13,9 @@ export const Route = createFileRoute("/faq")({
   head: () => ({
     meta: [
       { title: "FAQ — Shanti Shawls Emporium" },
-      { name: "description", content: "Questions about authenticity, shipping, care, returns and bespoke orders — answered." },
+      { name: "description", content: "Questions about authenticity, materials, care and visiting our Nurpur showroom — answered." },
       { property: "og:title", content: "FAQ — Shanti Shawls Emporium" },
-      { property: "og:description", content: "Questions about authenticity, shipping, care, returns and bespoke orders." },
+      { property: "og:description", content: "Questions about authenticity, materials, care and visiting our showroom." },
       { property: "og:url", content: "/faq" },
       { property: "og:image", content: "/og-image.jpg" },
       { name: "twitter:image", content: "/og-image.jpg" },
