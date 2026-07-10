@@ -56,7 +56,7 @@ export function SiteFooter({
             <h2 className="font-display italic text-3xl tracking-tight">{brandName}</h2>
             <p className="mt-3 text-[10px] uppercase tracking-[0.35em] text-gold">Est. {established}</p>
             <p className="mt-5 text-cream/65 text-sm leading-relaxed">{tagline}</p>
-            {(social?.facebook || social?.instagram) && (
+            {(social?.facebook || social?.instagram || social?.youtube) && (
               <div className="mt-6 flex gap-3">
                 {social?.facebook && (
                   <a href={social.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="grid place-items-center size-9 rounded-full border border-cream/15 hover:border-gold hover:text-gold transition">
@@ -66,6 +66,11 @@ export function SiteFooter({
                 {social?.instagram && (
                   <a href={social.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="grid place-items-center size-9 rounded-full border border-cream/15 hover:border-gold hover:text-gold transition">
                     <Instagram className="size-4" />
+                  </a>
+                )}
+                {social?.youtube && (
+                  <a href={social.youtube} target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="grid place-items-center size-9 rounded-full border border-cream/15 hover:border-gold hover:text-gold transition">
+                    <Youtube className="size-4" />
                   </a>
                 )}
               </div>
