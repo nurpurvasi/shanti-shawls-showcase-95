@@ -119,7 +119,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       meta.push({ property: "og:image", content: seo.ogImage });
       meta.push({ name: "twitter:image", content: seo.ogImage });
     }
-    const scripts: any[] = [];
+    const scripts: any[] = [
+      { src: "https://www.googletagmanager.com/gtag/js?id=G-0GLXYQXTCK", async: true },
+      {
+        children:
+          "window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-0GLXYQXTCK');",
+      },
+    ];
     if (jsonLd) {
       scripts.push({
         type: "application/ld+json",
@@ -136,6 +142,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         }),
       });
     }
+
     return {
       meta,
       links: [
