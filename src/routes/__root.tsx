@@ -187,6 +187,20 @@ function RootComponent() {
     });
     return () => sub.subscription.unsubscribe();
   }, [router, queryClient]);
+  useEffect(() => {
+    const track = () => {
+      const g = (window as any).gtag;
+      if (typeof g === "function") {
+        g("event", "page_view", {
+          page_path: window.location.pathname + window.location.search,
+          page_location: window.location.href,
+          page_title: document.title,
+        });
+      }
+    };
+    const unsub = router.subscribe("onResolved", track);
+    return () => unsub();
+  }, [router]);
   return (
     <QueryClientProvider client={queryClient}>
       <Outlet />
@@ -194,3 +208,4 @@ function RootComponent() {
     </QueryClientProvider>
   );
 }
+
