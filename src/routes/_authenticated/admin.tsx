@@ -11,7 +11,7 @@ import {
   upsertGalleryItem, deleteGalleryItem,
   upsertSetting, upsertSection, deleteSection,
   uploadMedia,
-  checkIsAdmin, listUsers, setUserRole, deleteUser,
+  checkIsAdmin, listUsers, setUserRole, deleteUser, inviteAdminUser,
 } from "@/lib/admin.functions";
 import { fetchAdminData } from "@/lib/admin.functions";
 
