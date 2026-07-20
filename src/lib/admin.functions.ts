@@ -63,6 +63,54 @@ const roleMutSchema = z.object({
   grant: z.boolean(),
 });
 
+const inviteSchema = z.object({
+  email: z.string().email().max(200),
+  role: z.enum(["admin", "super_admin"]).default("admin"),
+});
+
+export const inviteAdminUser = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => inviteSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    await assertSuperAdmin(context.supabase, context.userId);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    // Look up existing user
+    let userId: string | null = null;
+    const { data: listed } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 200 });
+    const existing = listed?.users?.find((u) => (u.email ?? "").toLowerCase() === data.email.toLowerCase());
+    if (existing) {
+      userId = existing.id;
+    } else {
+      const origin = process.env.SITE_URL || "https://shantishawlsemporium.com";
+      const { data: invited, error: invErr } = await supabaseAdmin.auth.admin.inviteUserByEmail(data.email, {
+        redirectTo: `${origin}/auth`,
+      });
+      if (invErr || !invited?.user) {
+        // Fallback: create the user directly with a random password so the account exists.
+        const tmp = crypto.randomUUID() + "!Aa1";
+        const { data: created, error: cErr } = await supabaseAdmin.auth.admin.createUser({
+          email: data.email,
+          password: tmp,
+          email_confirm: true,
+        });
+        if (cErr || !created?.user) throw invErr ?? cErr ?? new Error("Failed to create user");
+        userId = created.user.id;
+      } else {
+        userId = invited.user.id;
+      }
+    }
+
+    if (!userId) throw new Error("No user id");
+    const { error: rErr } = await context.supabase
+      .from("user_roles")
+      .upsert({ user_id: userId, role: data.role }, { onConflict: "user_id,role" });
+    if (rErr) throw rErr;
+    return { ok: true, user_id: userId, existed: !!existing };
+  });
+
+
+
 export const setUserRole = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => roleMutSchema.parse(input))
