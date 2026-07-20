@@ -120,14 +120,8 @@ export function SiteHeader({ brand }: { brand?: Brand } = {}) {
               {l.label}
             </Link>
           ))}
-          <Link
-            to="/auth"
-            onClick={() => setOpen(false)}
-            className="mt-8 eyebrow !text-muted-foreground"
-          >
-            Admin sign in
-          </Link>
         </nav>
+
       </div>
     )}
     </>
