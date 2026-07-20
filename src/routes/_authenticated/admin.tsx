@@ -872,12 +872,44 @@ function UsersTab() {
     try { await deleteUser({ data: { user_id } }); toast.success("Deleted"); refetch(); }
     catch (e: any) { toast.error(e?.message ?? "Failed"); }
   }
+  const [inviteEmail, setInviteEmail] = useState("");
+  const [inviteRole, setInviteRole] = useState<"admin" | "super_admin">("admin");
+  const [inviting, setInviting] = useState(false);
+  async function invite(e: React.FormEvent) {
+    e.preventDefault();
+    if (!inviteEmail) return;
+    setInviting(true);
+    try {
+      const res = await inviteAdminUser({ data: { email: inviteEmail, role: inviteRole } });
+      toast.success(res.existed ? "Role granted to existing user" : "Invitation sent");
+      setInviteEmail("");
+      refetch();
+    } catch (e: any) { toast.error(e?.message ?? "Failed to invite"); }
+    finally { setInviting(false); }
+  }
   return (
     <div className="max-w-4xl">
       <div className="mb-6">
         <h2 className="font-display text-2xl text-maroon">Users & Roles</h2>
         <p className="text-sm text-muted-foreground mt-1">Super Admin can manage every account, dashboard, and setting. Admin manages content, products, gallery, contact & branding — but cannot manage users or SEO.</p>
       </div>
+      <form onSubmit={invite} className="mb-6 rounded-2xl border border-maroon/10 bg-ivory p-4 flex flex-wrap items-end gap-3">
+        <label className="flex-1 min-w-[220px]">
+          <span className="text-[10px] uppercase tracking-[0.18em] text-ink/70">Invite by email</span>
+          <input type="email" required value={inviteEmail} onChange={(e) => setInviteEmail(e.target.value)} placeholder="name@example.com" className="mt-1 w-full px-3 py-2 rounded-lg bg-cream border border-maroon/15 text-sm focus:outline-none focus:border-gold" />
+        </label>
+        <label>
+          <span className="text-[10px] uppercase tracking-[0.18em] text-ink/70">Role</span>
+          <select value={inviteRole} onChange={(e) => setInviteRole(e.target.value as any)} className="mt-1 px-3 py-2 rounded-lg bg-cream border border-maroon/15 text-sm">
+            <option value="admin">Admin</option>
+            <option value="super_admin">Super Admin</option>
+          </select>
+        </label>
+        <button disabled={inviting} className="rounded-full bg-maroon text-cream px-5 py-2.5 text-[11px] uppercase tracking-[0.2em] hover:bg-maroon-deep disabled:opacity-60">
+          {inviting ? "Sending…" : "Send Invite"}
+        </button>
+      </form>
+
       {isLoading ? (
         <p className="text-sm text-muted-foreground">Loading users…</p>
       ) : (
